@@ -10,6 +10,7 @@ const Button = ({
   style,
   buttonTextLowerCase,
   onClick,
+  loading,
   ...props
 }) => {
   return (
@@ -18,7 +19,13 @@ const Button = ({
       className={`${className} 
         ${!variant && "cursor-pointer flex leading-[24px]"}`}
     >
-      <span className="skew-x-[30deg]">{children}</span>
+      <span className="skew-x-[30deg]">
+        {loading ? (
+          <l-dot-spinner size="30" speed="0.9" color="white"></l-dot-spinner>
+        ) : (
+          children
+        )}
+      </span>
       {icon && icon}
     </button>
   );

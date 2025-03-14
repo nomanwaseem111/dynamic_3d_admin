@@ -16,8 +16,8 @@ export default function ForgotPassword() {
 
   const onSubmit = (data) => {
     console.log("Form Data:", data);
-    if(data){
-        setForgetPasswordCodeSent(true)
+    if (data) {
+      setForgetPasswordCodeSent(true);
     }
   };
 

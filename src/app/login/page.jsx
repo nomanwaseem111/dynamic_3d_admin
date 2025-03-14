@@ -4,6 +4,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { Ellipse, LoginLogo } from "../../../public";
 import Button from "../components/common/Button";
+import { useState } from "react";
+import { dotSpinner } from "ldrs";
+
+dotSpinner.register();
 
 export default function LoginPage() {
   const {
@@ -12,8 +16,14 @@ export default function LoginPage() {
     formState: { errors },
   } = useForm();
 
+  const [loading, setLoading] = useState(false);
+
   const onSubmit = (data) => {
-    console.log("Form Data:", data);
+    setLoading(true);
+    setTimeout(() => {
+      console.log("Form Data:", data);
+      setLoading(false);
+    }, 5000);
   };
 
   return (
@@ -73,6 +83,7 @@ export default function LoginPage() {
 
             <Button
               type="submit"
+              loading={loading}
               className="flex-shrink-0 font-[600] w-full h-[50px] btn flex justify-center items-center text-center skew-x-[-30deg] text-[18px] rounded-[12px] hover:opacity-90 transition-opacity border border-[#B2D235] text-black"
             >
               Sign In
