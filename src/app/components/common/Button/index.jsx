@@ -10,22 +10,17 @@ const Button = ({
   style,
   buttonTextLowerCase,
   onClick,
-
   ...props
 }) => {
   return (
-    <Link href={""} className={className}>
-      <button
-        {...props}
-        className={`${buttonTextLowerCase} 
-        ${
-          !variant && "cursor-pointer flex leading-[24px] skew-x-[30deg]"
-        }`}
-      >
-        {children}
-        {icon && icon}
-      </button>
-    </Link>
+    <button
+      {...props}
+      className={`${className} 
+        ${!variant && "cursor-pointer flex leading-[24px]"}`}
+    >
+      <span className="skew-x-[30deg]">{children}</span>
+      {icon && icon}
+    </button>
   );
 };
 

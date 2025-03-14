@@ -17,6 +17,23 @@ body {
   background: linear-gradient(128deg, #b2d235 17.98%, #81bf41 95.43%), #b2d235;
 }
 
-.navbar{
+.navbar {
   background: linear-gradient(90deg, #000 0%, #444 50%, #000 100%);
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.overlay {
+  border-radius: 1383.398px;
+  opacity: 0.43;
+  background: rgba(60, 138, 255, 0.3);
+  filter: blur(177.85000610351562px);
 }

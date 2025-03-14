@@ -17,7 +17,7 @@ export default function ProductInformation() {
     { id: 5, name: "3D Scanning Services", checked: false, icon: "📁" },
   ]);
   const [font, setFont] = useState("Montserrat");
-  const [fontSize, setFontSize] = useState("40");
+  const [fontSize, setFontSize] = useState("16");
   const [isBold, setIsBold] = useState(false);
   const [isItalic, setIsItalic] = useState(false);
   const [isUnderline, setIsUnderline] = useState(false);
@@ -492,7 +492,7 @@ export default function ProductInformation() {
                     ref={textareaRef}
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
-                    className="w-full min-h-[562px] p-[30px] text-start bg-transparent text-gray-300 text-sm md:text-base resize-none focus:outline-none"
+                    className="w-full min-h-[211px] p-[30px] text-start bg-transparent text-gray-300 text-sm md:text-base resize-none focus:outline-none"
                     style={{ lineHeight: "1.6" }}
                     placeholder="Enter Description..."
                   />
