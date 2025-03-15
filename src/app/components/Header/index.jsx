@@ -5,17 +5,20 @@ import Link from "next/link";
 import { LoginLogo } from "../../../../public";
 import Image from "next/image";
 
-
 export default function Navbar({
   user = { name: "JASON", email: "jason@example.com" },
 }) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <header className="w-full fixed top-0 left-0 navbar z-10 text-white">
+    <header className="w-full navbar z-10 text-white">
       <div className="container mx-auto px-4 py-3 flex items-center h-[96px] justify-between">
         <Link href="/" className="flex items-center space-x-2">
-          <Image src={LoginLogo} alt="LoginLogo" className="max-w-[273px] h-[26px]"/>
+          <Image
+            src={LoginLogo}
+            alt="LoginLogo"
+            className="max-w-[273px] h-[26px]"
+          />
         </Link>
 
         {/* Mobile menu button */}

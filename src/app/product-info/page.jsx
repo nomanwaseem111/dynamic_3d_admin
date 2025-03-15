@@ -39,10 +39,12 @@ export default function ProductInformation() {
   }, []);
 
   return (
-    <div className="flex h-screen  bg-black text-white">
-      <Sidebar />
+    <div className="flex  flex-col bg-[#111] text-white">
       <Navbar />
-      <ProductInfo />
+      <div className="flex">
+        <Sidebar />
+        <ProductInfo />
+      </div>
     </div>
   );
 }

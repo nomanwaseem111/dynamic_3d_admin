@@ -27,7 +27,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen relative flex flex-col items-center justify-center bg-[#111] p-4">
+    <div className="h-full relative flex flex-col items-center justify-center bg-[#111] p-4">
       <Image src={LoginLogo} alt="LoginLogo" />
 
       <div className="relative w-full max-w-md flex flex-col justify-center items-center">

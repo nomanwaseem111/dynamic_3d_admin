@@ -6,18 +6,13 @@ export default function StoreFront() {
   const [isVisibleOnStorefront, setIsVisibleOnStorefront] = useState(true);
 
   return (
-    <div className="min-h-screen bg-black text-white mt-[35px]">
-      {/* Header */}
+    <div className="min-h-screen text-white mt-[35px]">
       <div className="text-center mb-8">
         <h1 className="text-2xl font-bold mb-1">Storefront</h1>
         <p className="text-sm text-[#fff]">
           Setup what customers will see on the storefront
         </p>
       </div>
-
-      {/* Description Section */}
-
-      {/* Main Form Section */}
       <div className="bg-[#141414] rounded-[20px] p-4 md:p-6 mb-8 relative">
         <div className="mb-6">
           <h2 className="text-xl font-bold mb-4">Description</h2>
@@ -69,9 +64,7 @@ export default function StoreFront() {
           </div>
         </div>
 
-        {/* Form Content */}
         <div className="space-y-6">
-          {/* Search Keywords */}
           <div>
             <label htmlFor="search-keywords" className="block mb-2 font-medium">
               Search Keywords
@@ -84,7 +77,6 @@ export default function StoreFront() {
             />
           </div>
 
-          {/* Availability Test */}
           <div>
             <label htmlFor="availability" className="block mb-2 font-medium">
               Availability Test
@@ -97,7 +89,6 @@ export default function StoreFront() {
             />
           </div>
 
-          {/* Sort Order, Template Layout, Condition */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label htmlFor="sort-order" className="block mb-2 font-medium">
@@ -172,7 +163,6 @@ export default function StoreFront() {
             </div>
           </div>
 
-          {/* Warranty Information */}
           <div>
             <label htmlFor="warranty" className="block mb-2 font-medium">
               Warranty Information
