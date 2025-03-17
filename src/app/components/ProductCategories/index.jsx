@@ -1,4 +1,8 @@
+import Image from "next/image";
 import { useState, useRef } from "react";
+import { downArrowIcon, PlusIcon } from "../../../../public";
+import Button from "../common/Button";
+import Link from "next/link";
 
 export const ProductCategories = () => {
   const [categories, setCategories] = useState([
@@ -7,11 +11,14 @@ export const ProductCategories = () => {
     { id: 3, name: "Accessories", checked: false, icon: "📁" },
     { id: 4, name: "Engineering Computers", checked: false, icon: "📁" },
     { id: 5, name: "3D Scanning Services", checked: false, icon: "📁" },
+    { id: 5, name: "3D Scanning Services", checked: false, icon: "📁" },
+    { id: 5, name: "3D Scanning Services", checked: false, icon: "📁" },
+    { id: 5, name: "3D Scanning Services", checked: false, icon: "📁" },
   ]);
 
   const [isVisibleOnStorefront, setIsVisibleOnStorefront] = useState(true);
-  const [productType, setProductType] = useState("Physical");
-  const [brand, setBrand] = useState("Creaform");
+  const [productType, setProductType] = useState("");
+  const [brand, setBrand] = useState("");
   const [isProductTypeOpen, setIsProductTypeOpen] = useState(false);
   const [isBrandOpen, setIsBrandOpen] = useState(false);
   const productTypeRef = useRef(null);
@@ -74,8 +81,7 @@ export const ProductCategories = () => {
           </label>
           <input
             type="text"
-            className="w-full px-3 py-2 bg-[#111] border border-[#333] rounded-md text-white focus:outline-none focus:ring-1 focus:ring-[#9ACD32] focus:border-[#9ACD32]"
-            defaultValue="HandySCAN BLACK | Elite with automation Kit"
+            className="w-full px-3 h-[50px] bg-[#111] border border-[#333] rounded-[8px] text-white focus:outline-none focus:ring-1 focus:ring-[#9ACD32] focus:border-[#9ACD32]"
           />
         </div>
 
@@ -83,8 +89,7 @@ export const ProductCategories = () => {
           <label className="block mb-2 text-[18px] font-[700]">SKU</label>
           <input
             type="text"
-            className="w-full px-3 py-2 bg-[#111] border border-[#333] rounded-md text-white focus:outline-none focus:ring-1 focus:ring-[#9ACD32] focus:border-[#9ACD32]"
-            defaultValue="TRK-1138"
+            className="w-full px-3 h-[50px] bg-[#111] border border-[#333] rounded-[8px] text-white focus:outline-none focus:ring-1 focus:ring-[#9ACD32] focus:border-[#9ACD32]"
           />
         </div>
 
@@ -95,14 +100,18 @@ export const ProductCategories = () => {
           <div className="relative">
             <button
               type="button"
-              className="w-full flex items-center justify-between px-3 py-2 bg-[#111] border border-[#333] rounded-md text-white focus:outline-none focus:ring-1 focus:ring-[#9ACD32] focus:border-[#9ACD32]"
+              className="w-full flex h-[50px] items-center justify-between px-3 py-2 bg-[#111] border border-[#333] rounded-[8px] text-white focus:outline-none focus:ring-1 focus:ring-[#9ACD32] focus:border-[#9ACD32]"
               onClick={() => setIsProductTypeOpen(!isProductTypeOpen)}
             >
               <span>{productType}</span>
-              {/* <ChevronDown
-            size={16}
-            className={`transition-transform ${isProductTypeOpen ? "rotate-180" : ""}`}
-          /> */}
+
+              <Image
+                src={downArrowIcon}
+                alt="downArrowIcon"
+                className={`transition-transform ${
+                  isProductTypeOpen ? "rotate-180" : ""
+                }`}
+              />
             </button>
 
             {isProductTypeOpen && (
@@ -144,7 +153,7 @@ export const ProductCategories = () => {
           <div className="relative">
             <button
               type="button"
-              className="w-full flex items-center justify-between px-3 py-2 bg-[#111] border border-[#333] rounded-md text-white focus:outline-none focus:ring-1 focus:ring-[#9ACD32] focus:border-[#9ACD32]"
+              className="w-full flex items-center justify-between px-3 h-[50px] bg-[#111] border border-[#333] rounded-[8px] text-white focus:outline-none focus:ring-1 focus:ring-[#9ACD32] focus:border-[#9ACD32]"
               onClick={() => setIsBrandOpen(!isBrandOpen)}
             >
               <span>{brand}</span>
@@ -182,11 +191,10 @@ export const ProductCategories = () => {
             <span className="text-gray-400 ml-1">(excluding tax)</span>
           </label>
           <div className="relative">
-            <span className="absolute left-3 top-2.5">$</span>
+            <span className="absolute left-3 top-3.5">$</span>
             <input
-              type="text"
-              className="w-full pl-6 pr-3 py-2 bg-[#111] border border-[#333] rounded-md text-white focus:outline-none focus:ring-1 focus:ring-[#9ACD32] focus:border-[#9ACD32]"
-              defaultValue="0.00"
+              type="number"
+              className="w-full pl-6  pr-3 h-[50px] bg-[#111] border border-[#333] rounded-[8px] text-white focus:outline-none focus:ring-1 focus:ring-[#9ACD32] focus:border-[#9ACD32]"
             />
           </div>
         </div>
@@ -198,10 +206,9 @@ export const ProductCategories = () => {
           <div className="relative">
             <input
               type="text"
-              className="w-full px-3 py-2 pr-12 bg-[#111] border border-[#333] rounded-md text-white focus:outline-none focus:ring-1 focus:ring-[#9ACD32] focus:border-[#9ACD32]"
-              defaultValue="6.00"
+              className="w-full px-3 h-[50px] pr-12 bg-[#111] border border-[#333] rounded-md text-white focus:outline-none focus:ring-1 focus:ring-[#9ACD32] focus:border-[#9ACD32]"
             />
-            <span className="absolute right-3 top-2.5 text-gray-400">LBS</span>
+            <span className="absolute right-3 top-3.5 text-gray-400">LBS</span>
           </div>
         </div>
       </div>
@@ -209,54 +216,71 @@ export const ProductCategories = () => {
       <div className="mt-[55px]">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-[700]">Categories</h2>
-          <button className="flex items-center text-[12.562px] uppercase text-[#9ACD32]">
-            {/* <Plus size={14} className="mr-1 sm:hidden" />
-      <Plus size={16} className="mr-1 hidden sm:block" /> */}
-            <span className="">ADD CATEGORY</span>
-            {/* <span className="xs:hidden">ADD</span> */}
-          </button>
+          {categories.length > 0 && (
+            <Link
+              href="/"
+              className={`skew-x-[0deg] text-[#B2D235] !flex items-center font-[700] uppercase`}
+            >
+              <Image src={PlusIcon} alt="PlusIcon" /> Add Category
+            </Link>
+          )}
         </div>
 
-        <div className="bg-[#111] border border-[#333] rounded-md p-4">
-          {categories.map((category) => (
-            <div
-              key={category.id}
-              className="flex items-center py-2 border-b border-[#222] last:border-0"
-            >
-              <div className="w-6 text-center mr-2">
-                <div
-                  className={`w-4 h-4 mx-auto rounded border ${
-                    category.checked
-                      ? "bg-blue-500 border-blue-500"
-                      : "bg-transparent border-gray-500"
-                  } flex items-center justify-center cursor-pointer`}
-                  onClick={() => toggleCategory(category.id)}
-                >
-                  {category.checked && (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="12"
-                      height="12"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="3"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="text-white"
-                    >
-                      <polyline points="20 6 9 17 4 12"></polyline>
-                    </svg>
-                  )}
+        {categories.length > 0 ? (
+          <div className="bg-[#111] border h-[280px] no-scrollbar overflow-y-auto border-[#333]  rounded-[8px] p-4">
+            {categories.map((category) => (
+              <div
+                key={category.id}
+                className="flex items-center  py-2 border-b border-[#222] last:border-0"
+              >
+                <div className="w-6 text-center mr-2">
+                  <div
+                    className={`w-4 h-4 mx-auto rounded border ${
+                      category.checked
+                        ? "bg-blue-500 border-blue-500"
+                        : "bg-transparent border-gray-500"
+                    } flex items-center justify-center cursor-pointer`}
+                    onClick={() => toggleCategory(category.id)}
+                  >
+                    {category.checked && (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="12"
+                        height="12"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="3"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="text-white"
+                      >
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                    )}
+                  </div>
                 </div>
+                <div className="w-6 text-center mr-2 text-yellow-500">
+                  {category.icon}
+                </div>
+                <span>{category.name}</span>
               </div>
-              <div className="w-6 text-center mr-2 text-yellow-500">
-                {category.icon}
-              </div>
-              <span>{category.name}</span>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <div className="flex flex-col bg-[#111] border justify-center gap-y-1 border-[#333]  rounded-[8px] items-center min-h-[280px]">
+            <h2 className="text-[#595959] text-[38px] font-[700]">
+              No Categories
+            </h2>
+            <p className="text-[#595959]">Click on Add Category to add one</p>
+            <Link
+              href="/"
+              className={`skew-x-[0deg] text-[#B2D235] !flex items-center font-[700] uppercase`}
+            >
+              <Image src={PlusIcon} alt="PlusIcon" /> Add Category
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -12,7 +12,7 @@ export default function Navbar({
 
   return (
     <header className="w-full navbar z-10 text-white">
-      <div className="container mx-auto px-4 py-3 flex items-center h-[96px] justify-between">
+      <div className="w-[90%] mx-auto py-3 flex items-center h-[96px] justify-between">
         <Link href="/" className="flex items-center space-x-2">
           <Image
             src={LoginLogo}

@@ -44,3 +44,24 @@ input[type="number"] {
   background: rgba(60, 138, 255, 0.3);
   filter: blur(177.85000610351562px);
 }
+
+:hover.isActive {
+  border-left: 3px solid var(--dynamic-3-d-com-atlantis, #b2d235);
+}
+
+@layer utilities {
+  :-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+.drag-and-drop {
+  border-radius: 12px;
+  border: 1px dashed var(--dynamic-3-d-com-atlantis, #b2d235);
+  background: rgba(178, 210, 53, 0.03);
+}

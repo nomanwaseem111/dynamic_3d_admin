@@ -39,7 +39,7 @@ export default function ProductInformation() {
   }, []);
 
   return (
-    <div className="flex  flex-col bg-[#111] text-white">
+    <div className="flex flex-col bg-[#111] text-white">
       <Navbar />
       <div className="flex">
         <Sidebar />

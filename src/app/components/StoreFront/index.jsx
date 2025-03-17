@@ -6,7 +6,7 @@ export default function StoreFront() {
   const [isVisibleOnStorefront, setIsVisibleOnStorefront] = useState(true);
 
   return (
-    <div className="min-h-screen text-white mt-[35px]">
+    <div className="h-auto  text-white mt-[35px]">
       <div className="text-center mb-8">
         <h1 className="text-2xl font-bold mb-1">Storefront</h1>
         <p className="text-sm text-[#fff]">
@@ -72,7 +72,7 @@ export default function StoreFront() {
             <input
               type="text"
               id="search-keywords"
-              className="w-full  border border-gray-700 rounded-md p-2 text-sm"
+              className="w-full  border border-[#5f5f5f] rounded-md p-2 text-sm"
               placeholder="most accurate, black, elite, limited, 12 microns, automations, robot, cobot, automatic, quality"
             />
           </div>
@@ -84,7 +84,7 @@ export default function StoreFront() {
             <input
               type="text"
               id="availability"
-              className="w-full  border border-gray-700 rounded-md p-2 text-sm"
+              className="w-full  border border-[#5f5f5f]  rounded-md p-2 text-sm"
               placeholder="usually ships within 1-2 weeks"
             />
           </div>
@@ -97,7 +97,7 @@ export default function StoreFront() {
               <input
                 type="number"
                 id="sort-order"
-                className="w-full border border-gray-700 rounded-md p-2 text-sm"
+                className="w-full border border-[#5f5f5f]  rounded-md p-2 text-sm"
                 placeholder="0"
               />
             </div>
@@ -109,7 +109,7 @@ export default function StoreFront() {
               <div className="relative">
                 <select
                   id="template"
-                  className="w-full  border border-gray-700 rounded-md p-2 text-sm appearance-none"
+                  className="w-full  border border-[#5f5f5f]  rounded-md p-2 text-sm appearance-none"
                 >
                   <option>Default</option>
                 </select>
@@ -139,7 +139,7 @@ export default function StoreFront() {
               <div className="relative">
                 <select
                   id="condition"
-                  className="w-full  border border-gray-700 rounded-md p-2 text-sm appearance-none"
+                  className="w-full  border border-[#5f5f5f]  rounded-md p-2 text-sm appearance-none"
                 >
                   <option>New</option>
                 </select>
@@ -169,7 +169,7 @@ export default function StoreFront() {
             </label>
             <textarea
               id="warranty"
-              className="w-full border border-gray-700 rounded-md p-2 text-sm min-h-[100px]"
+              className="w-full border border-[#5f5f5f]  rounded-md p-2 text-sm min-h-[100px]"
               placeholder="Warranty Coverage: 12 Months Parts & Labor + 24/5 Tech Support (Extended Warranty Options Available)"
               defaultValue="Warranty Coverage: 12 Months Parts & Labor + 24/5 Tech Support (Extended Warranty Options Available)"
             ></textarea>
