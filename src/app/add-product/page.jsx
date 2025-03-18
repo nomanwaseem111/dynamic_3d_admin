@@ -31,7 +31,7 @@ export default function AddProduct() {
   return (
     <div className="flex flex-col bg-[#111] text-white">
       <Header />
-      <div className="flex">
+      <div className="flex h-full w-full">
         <Sidebar />
         <AddProductForm />
       </div>

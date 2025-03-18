@@ -186,7 +186,7 @@ export const AddProductForm = () => {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="flex-1 flex flex-col overflow-auto"
+      className="flex-1 flex h-full flex-col overflow-auto"
     >
       <div className="p-3 py-6 sm:p-6 max-w-full">
         <div className="flex justify-between items-center flex-wrap">

@@ -4,9 +4,9 @@ import { useState, useRef, useEffect } from "react";
 import Header from "@/components/Header";
 import { Sidebar } from "@/components/Sidebar/page";
 import Button from "@/components/common/Button";
+import AddProductForm from "@/components/AddProductForm/page";
 
 export default function ProductList() {
-
   const productTypeRef = useRef(null);
   const brandRef = useRef(null);
 
@@ -174,12 +174,12 @@ export default function ProductList() {
   };
 
   return (
-    <div className="flex flex-col  bg-[#111] text-white">
+    <div className="flex flex-col   bg-[#111] text-white">
       <Header />
-      <div className="flex">
+      <div className="flex h-full w-full">
         <Sidebar />
-        <div className="p-5 max-w-full bg-[#121212] text-white">
-          <header className="flex justify-between items-center mb-5">
+        <div className="p-5 w-full bg-[#121212] text-white">
+          <header className="flex justify-between w-full items-center mb-5">
             <h1 className="text-[40px] font-medium">Products</h1>
             <Button
               children={"Add Product"}
@@ -187,7 +187,7 @@ export default function ProductList() {
             />
           </header>
 
-          <div className="bg-[#141414] h-[826px] rounded-[20px]">
+          <div className="bg-[#141414] w-full rounded-[20px]">
             <div className="flex border-b no-scrollbar  p-[20px] border-[#333] mb-5 overflow-x-auto whitespace-nowrap">
               {tabs.map((tab) => (
                 <button
@@ -240,9 +240,9 @@ export default function ProductList() {
               />
             </div>
 
-            <div className="w-full  rounded overflow-hidden">
-              <div className="max-h-[400px] overflow-auto no-scrollbar ">
-                <table className="w-full border-collapse min-w-[800px]">
+            <div className="w-full rounded overflow-hidden">
+              <div className="max-h-[400px] overflow-auto no-scrollbar">
+                <table className="w-full border-collapse">
                   <thead className="sticky -top-1 bg-[#141414] z-10">
                     <tr className="border-b border-t  border-[#333]">
                       <th className="w-[40px] p-3 font-medium text-left"></th>
@@ -288,7 +288,7 @@ export default function ProductList() {
                         <td className="p-5">
                           <div className="flex items-center gap-2 max-w-full">
                             <div className="w-10 h-10 bg-[#333] rounded flex-shrink-0"></div>
-                            <span className="truncate">{product.name}</span>
+                            <span className="p-5">{product.name}</span>
                             <span
                               className={`flex-shrink-0 ${
                                 product.starred
@@ -301,7 +301,7 @@ export default function ProductList() {
                           </div>
                         </td>
                         <td className="p-5 truncate">{product.sku}</td>
-                        <td className="p-5 truncate">{product.categories}</td>
+                        <td className="p-5">{product.categories}</td>
                         <td className="p-5 flex justify-center items-center truncate">
                           {product.stock}
                         </td>
