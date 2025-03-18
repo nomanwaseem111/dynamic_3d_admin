@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { rightArrowIcon } from "../../../../public";
+import { rightArrowIcon } from "../../../public";
 import { MediaUploader } from "../MediaUploader";
 import { ProductCategories } from "../ProductCategories";
 import { ProductDescription } from "../ProductDescription";

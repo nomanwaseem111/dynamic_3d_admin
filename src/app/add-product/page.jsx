@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Sidebar } from "../components/Sidebar/page";
-import Header from "../components/Header";
-import { AddProductForm } from "../components/AddProductForm/page";
+import { Sidebar } from "../../components/Sidebar/page";
+import Header from "../../components/Header";
+import { AddProductForm } from "../../components/AddProductForm/page";
 
 export default function AddProduct() {
   const [categories, setCategories] = useState([

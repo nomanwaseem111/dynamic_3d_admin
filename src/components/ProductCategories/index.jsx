@@ -1,6 +1,8 @@
+"use client"
+
 import Image from "next/image";
 import { useState, useRef } from "react";
-import { downArrowIcon, PlusIcon } from "../../../../public";
+import { downArrowIcon, PlusIcon } from "../../../public";
 import Button from "../common/Button";
 import Link from "next/link";
 

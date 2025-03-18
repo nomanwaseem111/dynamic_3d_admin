@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-import { BoxIcon, HomeIcon } from "../../../../public";
+import { BoxIcon, HomeIcon } from "../../../public";
 
 const navItems = [
   { href: "/", label: "Dashboard", icon: HomeIcon },

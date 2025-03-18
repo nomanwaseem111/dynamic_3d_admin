@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import Image from "next/image";
 import Link from "next/link";
 import { Ellipse, LoginLogo } from "../../../public";
-import Button from "../components/common/Button";
+import Button from "../../components/common/Button";
 import { useState } from "react";
 
 export default function ForgotPassword() {

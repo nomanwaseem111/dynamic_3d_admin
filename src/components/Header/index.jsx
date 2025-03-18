@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { AvatarIcon, LoginLogo, LogoutIcon } from "../../../../public";
+import { AvatarIcon, LoginLogo, LogoutIcon } from "../../../public";
 import Image from "next/image";
 import Button from "../common/Button";
 

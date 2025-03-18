@@ -1,6 +1,7 @@
+"use client"
 import Image from "next/image";
 import { useState } from "react";
-import { starIcon } from "../../../../public";
+import { starIcon } from "../../../public";
 
 export default function StoreFront() {
   const [isVisibleOnStorefront, setIsVisibleOnStorefront] = useState(true);
