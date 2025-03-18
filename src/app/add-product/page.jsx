@@ -6,16 +6,6 @@ import Header from "@/components/Header";
 import { Sidebar } from "@/components/Sidebar/page";
 
 export default function AddProduct() {
-  const [categories, setCategories] = useState([
-    { id: 1, name: "3D Scanners", checked: true, icon: "📁" },
-    { id: 2, name: "3D Software", checked: false, icon: "📁" },
-    { id: 3, name: "Accessories", checked: false, icon: "📁" },
-    { id: 4, name: "Engineering Computers", checked: false, icon: "📁" },
-    { id: 5, name: "3D Scanning Services", checked: false, icon: "📁" },
-  ]);
-
-  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
-
   const productTypeRef = useRef(null);
   const brandRef = useRef(null);
 
