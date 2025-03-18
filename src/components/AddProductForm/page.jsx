@@ -1,10 +1,10 @@
 import Image from "next/image";
-import { rightArrowIcon } from "../../../public";
 import { MediaUploader } from "../MediaUploader";
 import { ProductCategories } from "../ProductCategories";
 import { ProductDescription } from "../ProductDescription";
 import StoreFront from "../StoreFront";
 import Button from "../common/Button";
+import { rightArrowIcon } from "../../../public";
 
 export const AddProductForm = () => {
   return (

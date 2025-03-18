@@ -2,9 +2,9 @@
 
 import Image from "next/image";
 import { useState, useRef } from "react";
-import { downArrowIcon, PlusIcon } from "../../../public";
 import Button from "../common/Button";
 import Link from "next/link";
+import { downArrowIcon } from "../../../public";
 
 export const ProductCategories = () => {
   const [categories, setCategories] = useState([

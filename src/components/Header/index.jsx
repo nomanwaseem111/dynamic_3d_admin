@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { AvatarIcon, LoginLogo, LogoutIcon } from "../../../public";
 import Image from "next/image";
 import Button from "../common/Button";
+import { AvatarIcon, LoginLogo, LogoutIcon } from "../../../public";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);

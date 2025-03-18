@@ -3,13 +3,13 @@ import { useForm } from "react-hook-form";
 import Image from "next/image";
 import Link from "next/link";
 import { Ellipse, LoginLogo } from "../../../public";
-import Button from "../../components/common/Button";
 import { useState } from "react";
-import { dotSpinner } from "ldrs";
+// import { dotSpinner } from "ldrs";
+import Button from "@/components/common/Button";
 
-dotSpinner.register();
+// dotSpinner.register();
 
-export default function LoginPage() {
+export default function SignIn() {
   const {
     register,
     handleSubmit,
@@ -19,10 +19,10 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
 
   const onSubmit = (data) => {
-    setLoading(true);
+    // setLoading(true);
     setTimeout(() => {
       console.log("Form Data:", data);
-      setLoading(false);
+      // setLoading(false);
     }, 5000);
   };
 
@@ -83,7 +83,7 @@ export default function LoginPage() {
 
             <Button
               type="submit"
-              loading={loading}
+              // loading={loading}
               className="flex-shrink-0 font-[600] w-full h-[50px] btn flex justify-center items-center text-center skew-x-[-30deg] text-[18px] rounded-[12px] hover:opacity-90 transition-opacity border border-[#B2D235] text-black"
             >
               Sign In
