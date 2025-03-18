@@ -6,24 +6,27 @@ import Link from "next/link";
 
 export const ProductCategories = () => {
   const [categories, setCategories] = useState([
-    { id: 1, name: "3D Scanners", checked: true, icon: "📁" },
-    { id: 2, name: "3D Software", checked: false, icon: "📁" },
-    { id: 3, name: "Accessories", checked: false, icon: "📁" },
-    { id: 4, name: "Engineering Computers", checked: false, icon: "📁" },
-    { id: 5, name: "3D Scanning Services", checked: false, icon: "📁" },
-    { id: 5, name: "3D Scanning Services", checked: false, icon: "📁" },
-    { id: 5, name: "3D Scanning Services", checked: false, icon: "📁" },
-    { id: 5, name: "3D Scanning Services", checked: false, icon: "📁" },
+    // { id: 1, name: "3D Scanners", checked: true, icon: "📁" },
+    // { id: 2, name: "3D Software", checked: false, icon: "📁" },
+    // { id: 3, name: "Accessories", checked: false, icon: "📁" },
+    // { id: 4, name: "Engineering Computers", checked: false, icon: "📁" },
+    // { id: 5, name: "3D Scanning Services", checked: false, icon: "📁" },
+    // { id: 5, name: "3D Scanning Services", checked: false, icon: "📁" },
+    // { id: 5, name: "3D Scanning Services", checked: false, icon: "📁" },
+    // { id: 5, name: "3D Scanning Services", checked: false, icon: "📁" },
   ]);
 
   const [isVisibleOnStorefront, setIsVisibleOnStorefront] = useState(true);
   const [productType, setProductType] = useState("");
+  const [categoriesType, setCategoriesType] = useState("");
   const [brand, setBrand] = useState("");
   const [isProductTypeOpen, setIsProductTypeOpen] = useState(false);
+  const [isCategoriesTypeOpen, setIsCategoriesTypeOpen] = useState(false);
+
   const [isBrandOpen, setIsBrandOpen] = useState(false);
   const productTypeRef = useRef(null);
   const brandRef = useRef(null);
-
+  const categoriesRef = useRef(null);
   const toggleCategory = (id) => {
     setCategories(
       categories.map((cat) =>
@@ -211,9 +214,82 @@ export const ProductCategories = () => {
             <span className="absolute right-3 top-3.5 text-gray-400">LBS</span>
           </div>
         </div>
+
+        <div ref={categoriesRef}>
+          <label className="block mb-2 text-[18px] font-[700]">
+            Categories
+          </label>
+          <div className="relative">
+            <button
+              type="button"
+              className="w-full flex h-[50px] items-center justify-between px-3 py-2 bg-[#111] border border-[#333] rounded-[8px] text-white focus:outline-none focus:ring-1 focus:ring-[#9ACD32] focus:border-[#9ACD32]"
+              onClick={() => setIsCategoriesTypeOpen(!isCategoriesTypeOpen)}
+            >
+              <span>{categoriesType}</span>
+
+              <Image
+                src={downArrowIcon}
+                alt="downArrowIcon"
+                className={`transition-transform ${
+                  isCategoriesTypeOpen ? "rotate-180" : ""
+                }`}
+              />
+            </button>
+
+            {isCategoriesTypeOpen && (
+              <div className="absolute z-10 mt-1 w-full bg-[#111] border border-[#333] rounded-md shadow-lg">
+                <div
+                  className="px-3 py-2 hover:bg-[#222] cursor-pointer"
+                  onClick={() => {
+                    setCategoriesType("3D Scanners");
+                    setIsCategoriesTypeOpen(false);
+                  }}
+                >
+                  3D Scanners
+                </div>
+                <div
+                  className="px-3 py-2 hover:bg-[#222] cursor-pointer"
+                  onClick={() => {
+                    setCategoriesType("3D Software");
+                    setIsCategoriesTypeOpen(false);
+                  }}
+                >
+                  3D Software
+                </div>
+                <div
+                  className="px-3 py-2 hover:bg-[#222] cursor-pointer"
+                  onClick={() => {
+                    setCategoriesType("Accessories");
+                    setIsCategoriesTypeOpen(false);
+                  }}
+                >
+                  Accessories
+                </div>
+                <div
+                  className="px-3 py-2 hover:bg-[#222] cursor-pointer"
+                  onClick={() => {
+                    setCategoriesType("Engineering Computers");
+                    setIsCategoriesTypeOpen(false);
+                  }}
+                >
+                  Engineering Computers
+                </div>
+                <div
+                  className="px-3 py-2 hover:bg-[#222] cursor-pointer"
+                  onClick={() => {
+                    setCategoriesType("3D Scanning Services");
+                    setIsCategoriesTypeOpen(false);
+                  }}
+                >
+                  3D Scanning Services
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
-      <div className="mt-[55px]">
+      {/* <div className="mt-[55px]">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-[700]">Categories</h2>
           {categories.length > 0 && (
@@ -281,7 +357,7 @@ export const ProductCategories = () => {
             </Link>
           </div>
         )}
-      </div>
+      </div> */}
     </div>
   );
 };

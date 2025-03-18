@@ -171,7 +171,7 @@ export default function StoreFront() {
               id="warranty"
               className="w-full border border-[#5f5f5f]  rounded-md p-2 text-sm min-h-[100px]"
               placeholder="Warranty Coverage: 12 Months Parts & Labor + 24/5 Tech Support (Extended Warranty Options Available)"
-              defaultValue="Warranty Coverage: 12 Months Parts & Labor + 24/5 Tech Support (Extended Warranty Options Available)"
+              defaultValue=""
             ></textarea>
           </div>
         </div>

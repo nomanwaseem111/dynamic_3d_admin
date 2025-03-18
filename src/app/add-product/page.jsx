@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import Navbar from "../components/Header";
-import { ProductInfo } from "../components/ProductInfo/page";
 import { Sidebar } from "../components/Sidebar/page";
+import Header from "../components/Header";
+import { AddProductForm } from "../components/AddProductForm/page";
 
-export default function ProductInformation() {
+export default function AddProduct() {
   const [categories, setCategories] = useState([
     { id: 1, name: "3D Scanners", checked: true, icon: "📁" },
     { id: 2, name: "3D Software", checked: false, icon: "📁" },
@@ -40,10 +40,10 @@ export default function ProductInformation() {
 
   return (
     <div className="flex flex-col bg-[#111] text-white">
-      <Navbar />
+      <Header />
       <div className="flex">
         <Sidebar />
-        <ProductInfo />
+        <AddProductForm />
       </div>
     </div>
   );

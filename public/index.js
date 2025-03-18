@@ -6,6 +6,8 @@ import downArrowIcon from "./assets/down-arrow.svg";
 import HomeIcon from "./assets/home.svg";
 import BoxIcon from "./assets/box.svg";
 import PlusIcon from "./assets/plus.svg";
+import AvatarIcon from "./assets/avatar.svg";
+import LogoutIcon from "./assets/logout.svg";
 
 export {
   LoginLogo,
@@ -15,5 +17,7 @@ export {
   downArrowIcon,
   HomeIcon,
   BoxIcon,
-  PlusIcon
+  PlusIcon,
+  AvatarIcon,
+  LogoutIcon
 };
