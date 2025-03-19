@@ -1,11 +1,10 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import Header from "@/components/Header";
-import { Sidebar } from "@/components/Sidebar/page";
-import Button from "@/components/common/Button";
-import AddProductForm from "@/components/AddProductForm/page";
+import { Sidebar } from "../../components/Sidebar/page";
+import Button from "../../components/common/Button";
 import Link from "next/link";
+import Header from "../../components/Header";
 
 export default function Products() {
   const productTypeRef = useRef(null);

@@ -4,8 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { Ellipse, LoginLogo } from "../../../public";
 import { useState } from "react";
-import Button from "@/components/common/Button";
-
+import { signIn } from "aws-amplify/auth";
+import Button from "../../components/common/Button";
 
 export default function SignIn() {
   const {
@@ -14,14 +14,23 @@ export default function SignIn() {
     formState: { errors },
   } = useForm();
 
-  const [loading, setLoading] = useState(false);
+  const [isLoader, setIsLoader] = useState(false);
 
-  const onSubmit = (data) => {
-    // setLoading(true);
-    setTimeout(() => {
-      console.log("Form Data:", data);
-      // setLoading(false);
-    }, 5000);
+  const onSubmit = async (data) => {
+    // setIsLoader("loading...");
+    console.log(data);
+    try {
+      const res = await signIn({
+        username: data?.email,
+        password: data?.password,
+      });
+
+      console.log("res", res);
+    } catch (error) {
+      // setIsLoader(false);
+      console.log(error);
+      // toast.error(error.message);
+    }
   };
 
   return (
