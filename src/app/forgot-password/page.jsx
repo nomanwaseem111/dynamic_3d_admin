@@ -24,7 +24,7 @@ export default function ForgotPassword() {
   const renderForm = () => {
     return (
       <div>
-        <label htmlFor="email" className="block text-white mb-1">
+        <label htmlFor="email" className="block text-white mb-1 font-[montserrat] ">
           Email
         </label>
         <input
@@ -32,10 +32,10 @@ export default function ForgotPassword() {
           id="email"
           placeholder="example@domain.com"
           {...register("email", { required: "Email is required" })}
-          className="w-full bg-[#222] border border-[#333] text-white p-2 rounded"
+          className="w-full bg-[#222] border border-[#333] text-white p-2 rounded font-[montserrat] "
         />
         {errors.email && (
-          <p className="text-red-500 text-sm">{errors.email.message}</p>
+          <p className="text-red-500 text-sm font-[montserrat] ">{errors.email.message}</p>
         )}
         <Button
           type="submit"
@@ -51,7 +51,7 @@ export default function ForgotPassword() {
     return (
       <>
         <div>
-          <label htmlFor="email" className="block text-white mb-1">
+          <label htmlFor="email" className="block text-white mb-1 font-[montserrat] ">
             Code
           </label>
           <input
@@ -59,14 +59,14 @@ export default function ForgotPassword() {
             id="code"
             placeholder="Enter Code"
             {...register("code", { required: "Code is required" })}
-            className="w-full bg-[#222] border border-[#333] text-white p-2 rounded"
+            className="w-full bg-[#222] border border-[#333] text-white p-2 rounded font-[montserrat]"
           />
           {errors.code && (
-            <p className="text-red-500 text-sm">{errors.code.message}</p>
+            <p className="text-red-500 text-sm font-[montserrat]">{errors.code.message}</p>
           )}
         </div>
         <div>
-          <label htmlFor="email" className="block text-white mb-1">
+          <label htmlFor="email" className="block text-white mb-1 font-[montserrat]">
             New Password
           </label>
           <input
@@ -76,14 +76,14 @@ export default function ForgotPassword() {
             {...register("newpassword", {
               required: "New Password is required",
             })}
-            className="w-full bg-[#222] border border-[#333] text-white p-2 rounded"
+            className="w-full bg-[#222] border border-[#333] text-white p-2 rounded font-[montserrat]"
           />
           {errors.newpassword && (
-            <p className="text-red-500 text-sm">{errors.newpassword.message}</p>
+            <p className="text-red-500 text-sm font-[montserrat]">{errors.newpassword.message}</p>
           )}
         </div>
         <div>
-          <label htmlFor="email" className="block text-white mb-1">
+          <label htmlFor="email" className="block text-white mb-1 font-[montserrat]">
             Repeat Password
           </label>
           <input
@@ -93,10 +93,10 @@ export default function ForgotPassword() {
             {...register("repeat_password", {
               required: "Repeat Password is required",
             })}
-            className="w-full bg-[#222] border border-[#333] text-white p-2 rounded"
+            className="w-full bg-[#222] border border-[#333] text-white p-2 rounded font-[montserrat]"
           />
           {errors.repeat_password && (
-            <p className="text-red-500 text-sm">
+            <p className="text-red-500 text-sm font-[montserrat]">
               {errors.repeat_password.message}
             </p>
           )}
@@ -119,10 +119,10 @@ export default function ForgotPassword() {
         <div className="login-container p-6 rounded-[24px] w-full max-w-sm z-10 my-12">
           {!forgetPasswordCodeSent && (
             <>
-              <h3 className="text-white font-bold text-[24px] text-center">
+              <h3 className="text-white font-bold text-[24px] text-center font-[montserrat]">
                 Forgot your password?{" "}
               </h3>
-              <p className="text-white text-center mt-6 text-sm mb-6">
+              <p className="text-white text-center mt-6 text-sm mb-6 font-[montserrat]">
                 Please enter your email below and we will send you instructions
                 to reset your username
               </p>
@@ -135,7 +135,7 @@ export default function ForgotPassword() {
           {!forgetPasswordCodeSent && (
             <Link
               href={"/"}
-              className="text-[#fff] text-center mt-3 flex justify-center items-center"
+              className="text-[#fff] text-center mt-3 flex justify-center items-center font-[montserrat]"
             >
               Back
             </Link>

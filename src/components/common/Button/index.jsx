@@ -16,7 +16,7 @@ const Button = ({
     <button
       {...props}
       className={`${className} 
-        ${!variant && "cursor-pointer flex leading-[24px]"}`}
+        ${!variant && "cursor-pointer font-[montserrat] flex leading-[24px]"}`}
       onClick={onClick}
     >
       <span className="skew-x-[30deg]">

@@ -29,7 +29,7 @@ export default function AddProduct() {
   }, []);
 
   return (
-    <div className="flex flex-col bg-[#111] text-white">
+    <div className="flex flex-col bg-[#111] font-[montserrat] text-white">
       <Header />
       <div className="flex h-full w-full">
         <Sidebar />

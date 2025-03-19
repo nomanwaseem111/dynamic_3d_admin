@@ -302,17 +302,17 @@ export default function Products() {
   };
 
   return (
-    <div className="flex flex-col h-screen  bg-[#111] text-white">
+    <div className="flex flex-col h-screen font-[montserrat] bg-[#111] text-white">
       <Header />
       <div className="flex h-full w-full">
         <Sidebar />
         <div className="p-5 w-full bg-[#121212] text-white">
           <header className="flex justify-between w-full items-center mb-5">
-            <h1 className="text-[40px] font-medium font-[montserrat]">Products</h1>
+            <h1 className="text-[40px] font-medium">Products</h1>
             <Link href="/add-product">
               <Button
                 children="Add Product"
-                className="skew-x-[-30deg] font-[montserrat] btn uppercase max-w-[180px] px-5 w-full rounded-[9.421px] h-[56px] font-bold flex justify-center items-center text-[#000]"
+                className="skew-x-[-30deg] btn uppercase max-w-[180px] px-5 w-full rounded-[9.421px] h-[56px] font-bold flex justify-center items-center text-[#000]"
               />
             </Link>
           </header>

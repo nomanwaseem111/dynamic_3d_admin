@@ -37,13 +37,13 @@ export default function SignIn() {
       <Image src={LoginLogo} alt="LoginLogo" />
 
       <div className="relative w-full max-w-md flex flex-col justify-center items-center">
-        <p className="text-white text-center text-sm mt-[17px]">
+        <p className="text-white text-center text-sm mt-[17px] font-[montserrat]">
           LOG IN TO YOUR STORE
         </p>
         <div className="login-container p-6 rounded-[24px] w-full max-w-sm z-10 mt-[46px]">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-white mb-1">
+              <label htmlFor="email" className="block text-white mb-1 font-[montserrat]">
                 Email
               </label>
               <input
@@ -51,7 +51,7 @@ export default function SignIn() {
                 id="email"
                 placeholder="example@domain.com"
                 {...register("email", { required: "Email is required" })}
-                className="w-full bg-[#222] border border-[#333] text-white p-2 rounded"
+                className="w-full bg-[#222] border border-[#333] text-white p-2 rounded font-[montserrat]"
               />
               {errors.email && (
                 <p className="text-red-500 text-sm">{errors.email.message}</p>
@@ -59,7 +59,7 @@ export default function SignIn() {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-white mb-1">
+              <label htmlFor="password" className="block text-white mb-1 font-[montserrat]">
                 Password
               </label>
               <input
@@ -69,7 +69,7 @@ export default function SignIn() {
                 {...register("password", {
                   required: "Password is required",
                 })}
-                className="w-full bg-[#222] border border-[#333] text-white p-2 rounded"
+                className="w-full bg-[#222] border border-[#333] text-white p-2 rounded font-[montserrat]"
               />
               {errors.password && (
                 <p className="text-red-500 text-sm">
@@ -81,7 +81,7 @@ export default function SignIn() {
             <div className="text-right">
               <Link
                 href="/forgot-password"
-                className="text-[#b3e142] underline text-[18px] font-[700] hover:underline"
+                className="text-[#b3e142] underline text-[18px] font-[montserrat] font-[700] hover:underline"
               >
                 Forgot your password?
               </Link>

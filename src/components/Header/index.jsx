@@ -42,8 +42,8 @@ export default function Header() {
         <div className={`hidden md:flex items-center space-x-4`}>
           <Image src={AvatarIcon} alt="AvatarIcon" />
           <div>
-            <p className="font-bold text-[14px]">JASON</p>
-            <p className="text-[12px] text-[#808080]">jason@example.com</p>
+            <p className="font-bold text-[14px] font-[montserrat]">JASON</p>
+            <p className="text-[12px] text-[#808080] font-[montserrat]">jason@example.com</p>
           </div>
           <Button className={"skew-x-[-30deg]"}>
             <Image src={LogoutIcon} alt="LogoutIcon" />

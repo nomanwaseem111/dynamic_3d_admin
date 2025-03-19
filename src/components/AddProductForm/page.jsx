@@ -191,8 +191,8 @@ export const AddProductForm = () => {
       <div className="p-3 py-6 sm:p-6 max-w-full">
         <div className="flex justify-between items-center flex-wrap">
           <h1 className="text-xl flex items-center gap-[15px] sm:text-[40px] font-medium text-white">
-            <Link href={'/products'}>
-            <Image src={rightArrowIcon} alt="rightArrowIcon" />
+            <Link href={"/products"}>
+              <Image src={rightArrowIcon} alt="rightArrowIcon" />
             </Link>
             Add Product
           </h1>
@@ -606,6 +606,12 @@ export const AddProductForm = () => {
                     bmp, jpeg, png, wbmp, xbm or webp. Maximum 8 MB
                   </p>
                 </div>
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileInputChange}
+                  style={{ display: "none" }}
+                />
               </div>
             </div>
           </div>
