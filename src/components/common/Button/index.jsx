@@ -18,6 +18,7 @@ const Button = ({
       {...props}
       className={`${className} 
         ${!variant && "cursor-pointer flex leading-[24px]"}`}
+      onClick={onClick}
     >
       <span className="skew-x-[30deg]">
         {loading ? (

@@ -8,6 +8,7 @@ import BoxIcon from "./assets/box.svg";
 import PlusIcon from "./assets/plus.svg";
 import AvatarIcon from "./assets/avatar.svg";
 import LogoutIcon from "./assets/logout.svg";
+import ErrorImage from "./assets/404.svg";
 
 export {
   LoginLogo,
@@ -19,5 +20,6 @@ export {
   BoxIcon,
   PlusIcon,
   AvatarIcon,
-  LogoutIcon
+  LogoutIcon,
+  ErrorImage
 };

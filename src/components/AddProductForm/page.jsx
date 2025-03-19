@@ -191,7 +191,9 @@ export const AddProductForm = () => {
       <div className="p-3 py-6 sm:p-6 max-w-full">
         <div className="flex justify-between items-center flex-wrap">
           <h1 className="text-xl flex items-center gap-[15px] sm:text-[40px] font-medium text-white">
+            <Link href={'/products'}>
             <Image src={rightArrowIcon} alt="rightArrowIcon" />
+            </Link>
             Add Product
           </h1>
           <div className="flex w-full max-w-[330px] justify-between items-center flex-wrap">
@@ -213,7 +215,7 @@ export const AddProductForm = () => {
         <div className="mb-8 mt-[37.5px] bg-[#141414] rounded-[20px] p-[35px]">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-[28px] font-[700]">Basic Information</h2>
-            <div className="flex items-center">
+            {/* <div className="flex items-center">
               <Controller
                 control={control}
                 name="visibleOnStorefront"
@@ -254,7 +256,7 @@ export const AddProductForm = () => {
                   </div>
                 )}
               />
-            </div>
+            </div> */}
           </div>
 
           <div className="grid grid-cols-1 mt-[41.5px] sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
@@ -465,64 +467,6 @@ export const AddProductForm = () => {
                     Add images and videos of your product to engage customers.
                   </p>
                 </div>
-                <div className="flex flex-col sm:flex-row flex-wrap text-center gap-5">
-                  <Link
-                    href="/"
-                    className="skew-x-[-30deg] flex justify-center items-center border font-bold rounded-[12px] border-[#B2D235] px-[24px] py-[12px]"
-                  >
-                    <span className="skew-x-[30deg] flex !gap-x-[11.72px]">
-                      <svg
-                        xmlns="http:www.w3.org/2000/svg"
-                        width="23"
-                        height="23"
-                        viewBox="0 0 23 23"
-                        fill="none"
-                      >
-                        <path
-                          d="M16.7314 12.1875H5.73145C5.35561 12.1875 5.04395 11.8758 5.04395 11.5C5.04395 11.1242 5.35561 10.8125 5.73145 10.8125H16.7314C17.1073 10.8125 17.4189 11.1242 17.4189 11.5C17.4189 11.8758 17.1073 12.1875 16.7314 12.1875Z"
-                          fill="white"
-                        />
-                        <path
-                          d="M11.2314 17.6875C10.8556 17.6875 10.5439 17.3758 10.5439 17L10.5439 6C10.5439 5.62417 10.8556 5.3125 11.2314 5.3125C11.6073 5.3125 11.9189 5.62417 11.9189 6L11.9189 17C11.9189 17.3758 11.6073 17.6875 11.2314 17.6875Z"
-                          fill="white"
-                        />
-                      </svg>
-                      ADD FROM URL
-                    </span>
-                  </Link>
-                  <button
-                    onClick={handleUploadClick}
-                    className="skew-x-[-30deg] flex justify-center items-center border font-bold rounded-[12px] border-[#B2D235] px-[24px] py-[12px]"
-                  >
-                    <span className="skew-x-[30deg] flex !gap-x-[11.72px] uppercase">
-                      <svg
-                        xmlns="http:www.w3.org/2000/svg"
-                        width="23"
-                        height="23"
-                        viewBox="0 0 23 23"
-                        fill="none"
-                      >
-                        <path
-                          d="M18.958 9.84087H16.3088C14.1363 9.84087 12.3672 8.07171 12.3672 5.89921L12.3672 3.25004C12.3672 2.74587 11.9547 2.33337 11.4505 2.33337H7.56384C4.74051 2.33337 2.45801 4.16671 2.45801 7.43921L2.45801 15.5609C2.45801 18.8334 4.74051 20.6667 7.56384 20.6667H14.7688C17.5922 20.6667 19.8747 18.8334 19.8747 15.5609L19.8747 10.7575C19.8747 10.2534 19.4622 9.84087 18.958 9.84087ZM10.7355 12.9025C10.598 13.04 10.4238 13.1042 10.2497 13.1042C10.0755 13.1042 9.90134 13.04 9.76384 12.9025L9.10384 12.2425L9.10384 16.0834C9.10384 16.4592 8.79218 16.7709 8.41634 16.7709C8.04051 16.7709 7.72884 16.4592 7.72884 16.0834L7.72884 12.2425L7.06884 12.9025C6.80301 13.1684 6.36301 13.1684 6.09717 12.9025C5.83134 12.6367 5.83134 12.1967 6.09717 11.9309L7.93051 10.0975C7.99468 10.0425 8.05884 9.99671 8.13217 9.96004C8.15051 9.95087 8.17801 9.94171 8.19634 9.93254C8.25134 9.91421 8.30634 9.90504 8.37051 9.89587C8.39801 9.89587 8.41634 9.89587 8.44384 9.89587C8.51717 9.89587 8.59051 9.91421 8.66384 9.94171C8.67301 9.94171 8.67301 9.94171 8.68218 9.94171C8.75551 9.96921 8.82884 10.0242 8.88384 10.0792C8.89301 10.0884 8.90218 10.0884 8.90218 10.0975L10.7355 11.9309C11.0013 12.1967 11.0013 12.6367 10.7355 12.9025Z"
-                          fill="white"
-                        />
-                        <path
-                          d="M16.1439 8.57579C17.0147 8.58495 18.2247 8.58495 19.2605 8.58495C19.783 8.58495 20.058 7.97079 19.6914 7.60412C18.3714 6.27495 16.0064 3.88245 14.6497 2.52579C14.2739 2.14995 13.623 2.40662 13.623 2.92912L13.623 6.12829C13.623 7.46662 14.7597 8.57579 16.1439 8.57579Z"
-                          fill="white"
-                        />
-                      </svg>
-                      upload images
-                    </span>
-                  </button>
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    onChange={handleFileInputChange}
-                    accept="image/jpeg,image/png,image/bmp,image/webp,image/xbm,image/wbmp"
-                    multiple
-                    className="hidden"
-                  />
-                </div>
               </div>
 
               {images.length > 0 && (
@@ -626,7 +570,7 @@ export const AddProductForm = () => {
               <div
                 className={`mx-4 md:mx-6 border-2 border-dashed ${
                   isDragging ? "border-[#B2D235]" : "border-[#444444]"
-                } rounded-lg min-h-[169px] mt-[49px] cursor-pointer p-6 flex items-center gap-x-[52px]`}
+                } rounded-lg min-h-[169px] mt-[49px] hover:border-[#B2D235] cursor-pointer p-6 flex items-center gap-x-[52px]`}
                 onDragEnter={handleDragEnter}
                 onDragLeave={handleDragLeave}
                 onDragOver={handleDragOver}
@@ -682,7 +626,7 @@ export const AddProductForm = () => {
                   <Image src={starIcon} alt="starIcon" />
                   Set as a Featured Product on my Storefront
                 </h2>
-                <Controller
+                {/* <Controller
                   control={control}
                   name="showConditionOnStorefront"
                   render={({ field: { value, onChange } }) => (
@@ -721,7 +665,7 @@ export const AddProductForm = () => {
                       </label>
                     </div>
                   )}
-                />
+                /> */}
               </div>
             </div>
 

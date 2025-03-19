@@ -45,10 +45,6 @@ input[type="number"] {
   filter: blur(177.85000610351562px);
 }
 
-:hover.isActive {
-  border-left: 3px solid var(--dynamic-3-d-com-atlantis, #b2d235);
-}
-
 @layer utilities {
   :-webkit-scrollbar {
     display: none !important;

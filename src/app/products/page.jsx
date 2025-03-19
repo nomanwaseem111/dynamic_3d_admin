@@ -5,8 +5,9 @@ import Header from "@/components/Header";
 import { Sidebar } from "@/components/Sidebar/page";
 import Button from "@/components/common/Button";
 import AddProductForm from "@/components/AddProductForm/page";
+import Link from "next/link";
 
-export default function ProductList() {
+export default function Products() {
   const productTypeRef = useRef(null);
   const brandRef = useRef(null);
 
@@ -31,20 +32,7 @@ export default function ProductList() {
 
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [activeTab, setActiveTab] = useState("All");
-  const [searchQuery, setSearchQuery] = useState("");
-
-  const tabs = [
-    "All",
-    "Featured",
-    "Free Shipping",
-    "Out of Stock",
-    "Inventory Low",
-    "Last Imported",
-    "Visible",
-    "Not Visible",
-  ];
-
-  const products = [
+  const [products, setProducts] = useState([
     {
       id: 1,
       name: "HandySCAN BLACK | Elite with Automation Kit",
@@ -155,7 +143,148 @@ export default function ProductList() {
       visibility: "Enabled",
       starred: false,
     },
+  ]);
+  const tabs = [
+    "All",
+    // "Featured",
+    // "Free Shipping",
+    // "Out of Stock",
+    // "Inventory Low",
+    // "Last Imported",
+    "Visible",
+    "Not Visible",
   ];
+
+  // const products = [
+  //   {
+  //     id: 1,
+  //     name: "HandySCAN BLACK | Elite with Automation Kit",
+  //     sku: "SYS-H3D-BEK",
+  //     categories: "3D Scanners, Portable 3D Scanners...",
+  //     stock: "-",
+  //     price: "$0.00",
+  //     channels: "1",
+  //     visibility: "Enabled",
+  //     starred: true,
+  //   },
+  //   {
+  //     id: 2,
+  //     name: "HandySCAN BLACK | Elite with Automation Kit",
+  //     sku: "SYS-H3D-BEK",
+  //     categories: "3D Scanners, Portable 3D Scanners...",
+  //     stock: "-",
+  //     price: "$0.00",
+  //     channels: "1",
+  //     visibility: "Disabled",
+  //     starred: false,
+  //   },
+  //   {
+  //     id: 3,
+  //     name: "HandySCAN BLACK | Elite with Automation Kit",
+  //     sku: "SYS-H3D-BEK",
+  //     categories: "3D Scanners, Portable 3D Scanners...",
+  //     stock: "-",
+  //     price: "$0.00",
+  //     channels: "1",
+  //     visibility: "Enabled",
+  //     starred: true,
+  //   },
+  //   {
+  //     id: 4,
+  //     name: "HandySCAN BLACK | Elite with Automation Kit",
+  //     sku: "SYS-H3D-BEK",
+  //     categories: "3D Scanners, Portable 3D Scanners...",
+  //     stock: "-",
+  //     price: "$0.00",
+  //     channels: "1",
+  //     visibility: "Enabled",
+  //     starred: false,
+  //   },
+  //   {
+  //     id: 5,
+  //     name: "HandySCAN BLACK | Elite with Automation Kit",
+  //     sku: "SYS-H3D-BEK",
+  //     categories: "3D Scanners, Portable 3D Scanners...",
+  //     stock: "-",
+  //     price: "$0.00",
+  //     channels: "1",
+  //     visibility: "Disabled",
+  //     starred: true,
+  //   },
+  //   {
+  //     id: 6,
+  //     name: "HandySCAN BLACK | Elite with Automation Kit",
+  //     sku: "SYS-H3D-BEK",
+  //     categories: "3D Scanners, Portable 3D Scanners...",
+  //     stock: "-",
+  //     price: "$0.00",
+  //     channels: "1",
+  //     visibility: "Enabled",
+  //     starred: false,
+  //   },
+  //   {
+  //     id: 7,
+  //     name: "HandySCAN BLACK | Elite with Automation Kit",
+  //     sku: "SYS-H3D-BEK",
+  //     categories: "3D Scanners, Portable 3D Scanners...",
+  //     stock: "-",
+  //     price: "$0.00",
+  //     channels: "1",
+  //     visibility: "Enabled",
+  //     starred: true,
+  //   },
+  //   {
+  //     id: 8,
+  //     name: "HandySCAN BLACK | Elite with Automation Kit",
+  //     sku: "SYS-H3D-BEK",
+  //     categories: "3D Scanners, Portable 3D Scanners...",
+  //     stock: "-",
+  //     price: "$0.00",
+  //     channels: "1",
+  //     visibility: "Disabled",
+  //     starred: false,
+  //   },
+  //   {
+  //     id: 9,
+  //     name: "HandySCAN BLACK | Elite with Automation Kit",
+  //     sku: "SYS-H3D-BEK",
+  //     categories: "3D Scanners, Portable 3D Scanners...",
+  //     stock: "-",
+  //     price: "$0.00",
+  //     channels: "1",
+  //     visibility: "Enabled",
+  //     starred: true,
+  //   },
+  //   {
+  //     id: 10,
+  //     name: "HandySCAN BLACK | Elite with Automation Kit",
+  //     sku: "SYS-H3D-BEK",
+  //     categories: "3D Scanners, Portable 3D Scanners...",
+  //     stock: "-",
+  //     price: "$0.00",
+  //     channels: "1",
+  //     visibility: "Enabled",
+  //     starred: false,
+  //   },
+  // ];
+
+  const [visibility, setVisibility] = useState("Enabled");
+
+  const toggleVisibility = (id) => {
+    setProducts((prevProducts) =>
+      prevProducts.map((product) =>
+        product.id === id
+          ? {
+              ...product,
+              visibility:
+                product.visibility.toLowerCase() === "enabled"
+                  ? "Disabled"
+                  : "Enabled",
+            }
+          : product
+      )
+    );
+  };
 
   const toggleProductSelection = (productId) => {
     if (selectedProducts.includes(productId)) {
@@ -174,21 +303,23 @@ export default function ProductList() {
   };
 
   return (
-    <div className="flex flex-col   bg-[#111] text-white">
+    <div className="flex flex-col h-screen  bg-[#111] text-white">
       <Header />
       <div className="flex h-full w-full">
         <Sidebar />
         <div className="p-5 w-full bg-[#121212] text-white">
           <header className="flex justify-between w-full items-center mb-5">
             <h1 className="text-[40px] font-medium">Products</h1>
-            <Button
-              children={"Add Product"}
-              className="skew-x-[-30deg] btn uppercase max-w-[180px] rounded-[9.421px] h-[56px] w-full font-bold flex justify-center items-center text-[#000]"
-            />
+            <Link href="/add-product">
+              <Button
+                children="Add Product"
+                className="skew-x-[-30deg] btn uppercase max-w-[180px] px-5 w-full rounded-[9.421px] h-[56px] font-bold flex justify-center items-center text-[#000]"
+              />
+            </Link>
           </header>
 
           <div className="bg-[#141414] w-full rounded-[20px]">
-            <div className="flex border-b no-scrollbar  p-[20px] border-[#333] mb-5 overflow-x-auto whitespace-nowrap">
+            <div className="flex  no-scrollbar  p-[20px]  mb-2 overflow-x-auto whitespace-nowrap">
               {tabs.map((tab) => (
                 <button
                   key={tab}
@@ -204,7 +335,7 @@ export default function ProductList() {
               ))}
             </div>
 
-            <div className="flex justify-between mb-5  px-[20px]">
+            {/* <div className="flex justify-between mb-5  px-[20px]">
               <div className="relative flex-1 h-[55px] max-w-2xl">
                 <input
                   type="text"
@@ -238,30 +369,26 @@ export default function ProductList() {
                 children="Filters"
                 className="skew-x-[-30deg] w-[126px] h-[55px] border border-[#B2D235] rounded-[12px] flex justify-center font-bold uppercase items-center"
               />
-            </div>
+            </div> */}
 
             <div className="w-full rounded overflow-hidden">
               <div className="max-h-[400px] overflow-auto no-scrollbar">
                 <table className="w-full border-collapse">
                   <thead className="sticky -top-1 bg-[#141414] z-10">
                     <tr className="border-b border-t  border-[#333]">
-                      <th className="w-[40px] p-3 font-medium text-left"></th>
-                      <th className="p-3 font-medium text-left w-[30%]">
-                        Name
-                      </th>
-                      <th className="p-3 font-medium text-left w-[10%]">SKU</th>
-                      <th className="p-3 font-medium text-left w-[20%]">
-                        Categories
-                      </th>
-                      <th className="p-3 font-medium text-left w-[10%]">
+                      <th className="p-3 font-medium text-left"></th>
+                      <th className="p-3 font-medium text-left">Name</th>
+                      <th className="p-3 font-medium text-left">SKU</th>
+                      <th className="p-3 font-medium text-left">Categories</th>
+                      {/* <th className="p-3 font-medium text-left w-[10%]">
                         Current Stock
-                      </th>
+                      </th> */}
                       <th className="p-3 font-medium text-left w-[10%]">
                         Price
                       </th>
-                      <th className="p-3 font-medium text-left w-[10%]">
+                      {/* <th className="p-3 font-medium text-left w-[10%]">
                         Channels
-                      </th>
+                      </th> */}
                       <th className="p-3 font-medium text-left w-[10%]">
                         Visibility
                       </th>
@@ -289,7 +416,7 @@ export default function ProductList() {
                           <div className="flex items-center gap-2 max-w-full">
                             <div className="w-10 h-10 bg-[#333] rounded flex-shrink-0"></div>
                             <span className="p-5">{product.name}</span>
-                            <span
+                            {/* <span
                               className={`flex-shrink-0 ${
                                 product.starred
                                   ? "text-[#f8d64e]"
@@ -297,23 +424,23 @@ export default function ProductList() {
                               }`}
                             >
                               {product.starred ? "★" : "☆"}
-                            </span>
+                            </span> */}
                           </div>
                         </td>
                         <td className="p-5 truncate">{product.sku}</td>
                         <td className="p-5">{product.categories}</td>
-                        <td className="p-5 flex justify-center items-center truncate">
+                        {/* <td className="p-5 flex justify-center items-center truncate">
                           {product.stock}
-                        </td>
+                        </td> */}
                         <td className="p-5 truncate">{product.price}</td>
-                        <td className="p-5">
+                        {/* <td className="p-5">
                           <div className="flex justify-center items-center">
                             {product.channels}
                             <span className="text-xs ml-1 text-[#666]">▼</span>
                           </div>
-                        </td>
+                        </td> */}
                         <td className="p-5">
-                          <span
+                          {/* <span
                             className={`px-2.5 py-1 rounded text-xs font-medium ${
                               product.visibility.toLowerCase() === "enabled"
                                 ? "bg-[#28a745] text-white"
@@ -321,7 +448,19 @@ export default function ProductList() {
                             }`}
                           >
                             {product.visibility}
-                          </span>
+                          </span> */}
+
+                          <button onClick={() => toggleVisibility(product.id)}>
+                            <span
+                              className={`px-2.5 py-1 rounded text-xs font-medium ${
+                                product.visibility.toLowerCase() === "enabled"
+                                  ? "bg-[#28a745] text-white"
+                                  : "bg-[#dc3545] text-white"
+                              }`}
+                            >
+                              {product.visibility}
+                            </span>
+                          </button>
                         </td>
                       </tr>
                     ))}
