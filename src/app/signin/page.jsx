@@ -14,7 +14,6 @@ export default function SignIn() {
     formState: { errors },
   } = useForm();
 
-  const [isLoader, setIsLoader] = useState(false);
 
   const onSubmit = async (data) => {
     // setIsLoader("loading...");
