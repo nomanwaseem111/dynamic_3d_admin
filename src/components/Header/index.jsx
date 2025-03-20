@@ -5,9 +5,26 @@ import Link from "next/link";
 import Image from "next/image";
 import Button from "../common/Button";
 import { AvatarIcon, LoginLogo, LogoutIcon } from "../../../public";
+import { signOut } from "aws-amplify/auth";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
+
+  const router = useRouter();
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      // setters.setUser(null)
+      // setters.setToken(null)
+      // localStorage.clear()
+      router.push("/signin");
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
 
   return (
     <header className="w-full navbar z-10 text-white">
@@ -43,9 +60,11 @@ export default function Header() {
           <Image src={AvatarIcon} alt="AvatarIcon" />
           <div>
             <p className="font-bold text-[14px] font-[montserrat]">JASON</p>
-            <p className="text-[12px] text-[#808080] font-[montserrat]">jason@example.com</p>
+            <p className="text-[12px] text-[#808080] font-[montserrat]">
+              jason@example.com
+            </p>
           </div>
-          <Button className={"skew-x-[-30deg]"}>
+          <Button onClick={handleSignOut} className={"skew-x-[-30deg]"}>
             <Image src={LogoutIcon} alt="LogoutIcon" />
           </Button>
         </div>

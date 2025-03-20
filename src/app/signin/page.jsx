@@ -4,9 +4,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { Ellipse, LoginLogo } from "../../../public";
 import { useState } from "react";
-import { signIn } from "aws-amplify/auth";
+import { fetchAuthSession, signIn, signOut } from "aws-amplify/auth";
 import Button from "../../components/common/Button";
-
+import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
+import {Loader} from "../../components/Loader";
 export default function SignIn() {
   const {
     register,
@@ -14,23 +16,65 @@ export default function SignIn() {
     formState: { errors },
   } = useForm();
 
-
+  const router = useRouter();
+  const [isLoader, setIsLoader] = useState(false);
   const onSubmit = async (data) => {
-    // setIsLoader("loading...");
-    console.log(data);
+    setIsLoader(true);
     try {
       const res = await signIn({
         username: data?.email,
         password: data?.password,
       });
+      setIsLoader(false);
 
-      console.log("res", res);
+      const { tokens } = await fetchAuthSession();
+      const payload = tokens?.idToken?.payload;
+      const userType = payload["cognito:groups"]?.[0];
+
+      if (userType === "admin") {
+        toast.success("Login successful!");
+        router.push("/products");
+        setIsLoader(false);
+      } else {
+        signOut();
+        toast.error("Not Authorized");
+        setIsLoader(false);
+      }
     } catch (error) {
-      // setIsLoader(false);
       console.log(error);
-      // toast.error(error.message);
+      toast.error(error.message);
+      setIsLoader(false);
     }
   };
+
+  // const onSubmit = async (data) => {
+  //   setIsLoader(true);
+  //   try {
+  //     const res = await signIn({
+  //       username: data.email,
+  //       password: data.password,
+  //     });
+  //     console.log("res",res)
+  //     setIsLoader(false);
+  //     const { tokens } = await fetchAuthSession();
+  //     const payload = tokens?.idToken?.payload;
+  //     const userType = payload["cognito:groups"]?.[0];
+
+  //     if (userType === "admin") {
+  //       await actions.fetchAuthData();
+  //       toast.success("Login successful!");
+  //       navigate("/dashboard");
+  //       setIsLoader(false);
+  //     } else {
+  //       signOut();
+  //       toast.error("Not Authorized");
+  //       setIsLoader(false);
+  //     }
+  //   } catch (error) {
+  //     setIsLoader(false);
+  //     toast.error(error.message);
+  //   }
+  // };
 
   return (
     <div className="h-full relative flex flex-col items-center justify-center bg-[#111] p-4">
@@ -43,7 +87,10 @@ export default function SignIn() {
         <div className="login-container p-6 rounded-[24px] w-full max-w-sm z-10 mt-[46px]">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-white mb-1 font-[montserrat]">
+              <label
+                htmlFor="email"
+                className="block text-white mb-1 font-[montserrat]"
+              >
                 Email
               </label>
               <input
@@ -59,7 +106,10 @@ export default function SignIn() {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-white mb-1 font-[montserrat]">
+              <label
+                htmlFor="password"
+                className="block text-white mb-1 font-[montserrat]"
+              >
                 Password
               </label>
               <input
@@ -89,10 +139,9 @@ export default function SignIn() {
 
             <Button
               type="submit"
-              // loading={loading}
               className="flex-shrink-0 font-[600]  w-full h-[50px] btn flex justify-center items-center text-center skew-x-[-30deg] text-[18px] rounded-[12px] hover:opacity-90 transition-opacity border border-[#B2D235] text-black"
             >
-              Sign In
+              {isLoader ? <Loader /> : "Sign In"}
             </Button>
           </form>
         </div>

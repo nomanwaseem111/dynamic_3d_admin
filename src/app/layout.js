@@ -1,6 +1,8 @@
 import { Montserrat } from "next/font/google";
 import "./globals.css";
 import ConfigureAmplifyClientSide from "./amplify-cognito-config";
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
@@ -17,6 +19,8 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={`${montserrat.variable} antialiased`}>
         <>
+          <ToastContainer />
+
           <ConfigureAmplifyClientSide />
           {children}
         </>
