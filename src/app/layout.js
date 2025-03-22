@@ -3,6 +3,7 @@ import "./globals.css";
 import ConfigureAmplifyClientSide from "./amplify-cognito-config";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
+import { AuthContext } from "../context/AuthContext";
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
@@ -18,12 +19,12 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${montserrat.variable} antialiased`}>
-        <>
+        <AuthContext>
           <ToastContainer />
 
           <ConfigureAmplifyClientSide />
           {children}
-        </>
+        </AuthContext>
       </body>
     </html>
   );
