@@ -8,13 +8,16 @@ import { fetchAuthSession, signIn, signOut } from "aws-amplify/auth";
 import Button from "../../components/common/Button";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
-import {Loader} from "../../components/Loader";
+import { Loader } from "../../components/Loader";
+import { useAuth } from "../../context/AuthContext";
 export default function SignIn() {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
+
+  const { actions } = useAuth();
 
   const router = useRouter();
   const [isLoader, setIsLoader] = useState(false);
@@ -32,6 +35,8 @@ export default function SignIn() {
       const userType = payload["cognito:groups"]?.[0];
 
       if (userType === "admin") {
+        await actions.fetchAuthData();
+
         toast.success("Login successful!");
         router.push("/products");
         setIsLoader(false);

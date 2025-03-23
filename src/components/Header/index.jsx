@@ -8,18 +8,23 @@ import { AvatarIcon, LoginLogo, LogoutIcon } from "../../../public";
 import { signOut } from "aws-amplify/auth";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import { useAuth } from "../../context/AuthContext";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
+
+  const {setters} = useAuth()
 
   const router = useRouter();
 
   const handleSignOut = async () => {
     try {
       await signOut();
-      // setters.setUser(null)
-      // setters.setToken(null)
-      // localStorage.clear()
+      setters.setUser(null);
+      setters.setToken(null);
+      localStorage.clear();
+      document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+
       router.push("/signin");
     } catch (error) {
       toast.error(error.message);

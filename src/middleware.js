@@ -1,9 +1,16 @@
 import { NextResponse } from "next/server";
 
 export function middleware(request) {
-  const user = true;
+  const { pathname } = request.nextUrl;
+  const token = request.cookies.get("token")?.value;
 
-  if (!user) {
+  console.log("tokenssss", token);
+
+  if (pathname === "/signin" && token) {
+    return NextResponse.redirect(new URL("/products", request.url));
+  }
+
+  if ((pathname === "/products" || pathname === "/add-product") && !token) {
     return NextResponse.redirect(new URL("/signin", request.url));
   }
 
@@ -11,5 +18,5 @@ export function middleware(request) {
 }
 
 export const config = {
-  matcher: ["/products", "/add-product"],
+  matcher: ["/signin", "/products", "/add-product"],
 };
