@@ -24,21 +24,25 @@ export const AuthContext = ({ children }) => {
       if (tokens) {
         document.cookie = `token=${tokens.idToken}; path=/;`;
         localStorage.setItem("token", tokens.idToken);
-
         setToken(tokens.idToken);
       }
     } catch (err) {
-      // handle error
+      // handle error appropriately
     }
   };
 
-  console.log("token",token)
+  console.log("token", token);
 
-  console.log("user",token)
+  console.log("user", token);
 
   const fetchAuthData = async () => {
+    document.cookie = "refreshing=true; path=/;";
+
     await getUser();
     await getAuthSession();
+
+    document.cookie =
+      "refreshing=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
   };
   useEffect(() => {
     if (!user) {
@@ -47,7 +51,6 @@ export const AuthContext = ({ children }) => {
   }, [user, token]);
 
   useEffect(() => {
-    // If a user exists (i.e. is authenticated), redirect to products page.
     if (user) {
       router.push("/products");
     }
