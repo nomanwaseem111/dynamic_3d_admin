@@ -4,6 +4,9 @@ import Image from "next/image";
 import Link from "next/link";
 import Button from "../common/Button";
 import { rightArrowIcon, starIcon } from "../../../public";
+import { toast } from "react-toastify";
+import { useAuth } from "../../context/AuthContext";
+import { useRouter } from "next/navigation";
 
 export const AddProductForm = () => {
   const {
@@ -12,6 +15,7 @@ export const AddProductForm = () => {
     control,
     watch,
     setValue,
+    reset,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -35,6 +39,9 @@ export const AddProductForm = () => {
     },
   });
   const images = watch("images", []);
+
+  const { states } = useAuth();
+  const router = useRouter();
 
   const [content, setContent] = useState("");
   const [isHovering, setIsHovering] = useState(false);
@@ -129,6 +136,7 @@ export const AddProductForm = () => {
       "image/webp",
       "image/xbm",
       "image/wbmp",
+      "image/svg+xml",
     ];
     const validFiles = Array.from(files).filter(
       (file) => validTypes.includes(file.type) && file.size <= 8 * 1024 * 1024
@@ -175,12 +183,89 @@ export const AddProductForm = () => {
     setValue("images", updated);
   };
 
-  const onSubmit = (data) => {
-    const formData = {
-      ...data,
+  const onSubmit = async (data) => {
+    const payload = {
+      productName: data.productName,
+      sku: data.sku,
       description: content,
+      defaultPrice: Number(data.defaultPrice),
+      weight: Number(data.weight),
+      searchKeyword: data.searchKeywords,
+      availabilityTest: data.availability,
+      sortOrder: data.sortOrder,
+      warrantyInformation: data.warranty,
+      brand: data.brand,
+      categories: data.categoriesType,
+      condition: data.condition,
+      templateLayout: data.template,
+      productType: data.productType,
+      images: data.images ? data.images.map((img) => img.name) : [],
     };
-    console.log("Form Data:", formData);
+
+    try {
+      // 2) Create the product & get presigned URLs
+      const response = await fetch(
+        "https://s51b3gg2hh.execute-api.us-east-1.amazonaws.com/dev/create-product",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${states.token}`,
+          },
+          body: JSON.stringify(payload),
+        }
+      );
+
+      if (!response.ok) {
+        console.error("API Error:", response.statusText);
+        return;
+      }
+
+      const responseData = await response.json();
+      console.log("presignedUrls", responseData);
+
+      const presignedUrls = responseData?.presignedUrls;
+
+      console.log("presignedUrls", presignedUrls);
+
+      for (let i = 0; i < data.images.length; i++) {
+        const file = data.images[i].file;
+        const url = presignedUrls[i];
+
+        if (!file || !url) {
+          console.warn(`No file or presigned URL for index ${i}`);
+          continue;
+        }
+
+        const putResp = await fetch(url, {
+          method: "PUT",
+          headers: {
+            "Content-Type": file.type,
+          },
+          body: file,
+          mode: "cors",
+        });
+
+        console.log("putResp", putResp);
+
+        if (putResp.ok) {
+          console.log(`Image #${i} (${file.name}) uploaded successfully`);
+        } else {
+          const errorText = await putResp.text();
+          throw new Error(
+            `Failed to upload image #${i} (${file.name}). 
+             Status: ${putResp.status}. 
+             ${errorText}`
+          );
+        }
+      }
+      reset();
+      setContent("");
+      router.push("/products");
+      toast.success("Add Product successfully!");
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
   };
 
   return (
@@ -278,9 +363,12 @@ export const AddProductForm = () => {
               <label className="block mb-2 text-[18px] font-[700]">SKU</label>
               <input
                 type="text"
-                {...register("sku")}
+                {...register("sku", { required: true })}
                 className="w-full px-3 h-[50px] bg-[#111] border border-[#333] rounded-[8px] text-white focus:outline-none focus:ring-1 focus:ring-[#9ACD32] focus:border-[#9ACD32]"
               />
+              {errors.sku && (
+                <span className="text-red-500">This field is required</span>
+              )}
             </div>
 
             <div>
@@ -288,7 +376,7 @@ export const AddProductForm = () => {
                 Product Type
               </label>
               <select
-                {...register("productType")}
+                {...register("productType", { required: true })}
                 className="w-full h-[50px] px-3 py-2 bg-[#111] border border-[#333] rounded-[8px] text-white focus:outline-none focus:ring-1 focus:ring-[#9ACD32] focus:border-[#9ACD32]"
               >
                 <option value="">Select</option>
@@ -296,18 +384,24 @@ export const AddProductForm = () => {
                 <option value="Digital">Digital</option>
                 <option value="Service">Service</option>
               </select>
+              {errors.productType && (
+                <span className="text-red-500">This field is required</span>
+              )}
             </div>
 
             <div>
               <label className="block mb-2 text-[18px] font-[700]">Brand</label>
               <select
-                {...register("brand")}
+                {...register("brand", { required: true })}
                 className="w-full h-[50px] px-3 py-2 bg-[#111] border border-[#333] rounded-[8px] text-white focus:outline-none focus:ring-1 focus:ring-[#9ACD32] focus:border-[#9ACD32]"
               >
                 <option value="">Select</option>
                 <option value="Creaform">Creaform</option>
                 <option value="Other Brands">Other Brands</option>
               </select>
+              {errors.brand && (
+                <span className="text-red-500">This field is required</span>
+              )}
             </div>
 
             <div>
@@ -352,7 +446,7 @@ export const AddProductForm = () => {
                 Categories
               </label>
               <select
-                {...register("categoriesType")}
+                {...register("categoriesType", { required: true })}
                 className="w-full h-[50px] px-3 py-2 bg-[#111] border border-[#333] rounded-[8px] text-white focus:outline-none focus:ring-1 focus:ring-[#9ACD32] focus:border-[#9ACD32]"
               >
                 <option value="">Select</option>
@@ -366,6 +460,9 @@ export const AddProductForm = () => {
                   3D Scanning Services
                 </option>
               </select>
+              {errors.categoriesType && (
+                <span className="text-red-500">This field is required</span>
+              )}
             </div>
           </div>
         </div>
@@ -686,10 +783,13 @@ export const AddProductForm = () => {
                 <input
                   type="text"
                   id="search-keywords"
-                  {...register("searchKeywords")}
+                  {...register("searchKeywords", { required: true })}
                   className="w-full border border-[#5f5f5f] rounded-md p-2 text-sm"
                   placeholder="most accurate, black, elite, limited, 12 microns, automations, robot, cobot, automatic, quality"
                 />
+                {errors.searchKeywords && (
+                  <span className="text-red-500">This field is required</span>
+                )}
               </div>
 
               <div>
@@ -702,10 +802,13 @@ export const AddProductForm = () => {
                 <input
                   type="text"
                   id="availability"
-                  {...register("availability")}
+                  {...register("availability", { required: true })}
                   className="w-full border border-[#5f5f5f] rounded-md p-2 text-sm"
                   placeholder="usually ships within 1-2 weeks"
                 />
+                {errors.availability && (
+                  <span className="text-red-500">This field is required</span>
+                )}
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -719,10 +822,13 @@ export const AddProductForm = () => {
                   <input
                     type="number"
                     id="sort-order"
-                    {...register("sortOrder")}
+                    {...register("sortOrder", { required: true })}
                     className="w-full border border-[#5f5f5f] rounded-md p-2 text-sm"
                     placeholder="0"
                   />
+                  {errors.sortOrder && (
+                    <span className="text-red-500">This field is required</span>
+                  )}
                 </div>
 
                 <div>
@@ -794,10 +900,13 @@ export const AddProductForm = () => {
                 </label>
                 <textarea
                   id="warranty"
-                  {...register("warranty")}
+                  {...register("warranty", { required: true })}
                   className="w-full border border-[#5f5f5f] rounded-md p-2 text-sm min-h-[100px]"
                   placeholder="Warranty Coverage: 12 Months Parts & Labor + 24/5 Tech Support (Extended Warranty Options Available)"
                 ></textarea>
+                {errors.warranty && (
+                  <span className="text-red-500">This field is required</span>
+                )}
               </div>
             </div>
           </div>

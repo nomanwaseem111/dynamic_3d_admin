@@ -9,7 +9,6 @@ const navItems = [
 ];
 
 const SidebarLink = ({ href, label, icon, isActive }) => {
-  console.log("isActive", isActive);
   return (
     <Link
       href={href}

@@ -31,10 +31,6 @@ export const AuthContext = ({ children }) => {
     }
   };
 
-  console.log("token", token);
-
-  console.log("user", token);
-
   const fetchAuthData = async () => {
     document.cookie = "refreshing=true; path=/;";
 

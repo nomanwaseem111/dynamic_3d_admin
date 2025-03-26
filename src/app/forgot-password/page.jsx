@@ -15,7 +15,6 @@ export default function ForgotPassword() {
   const [forgetPasswordCodeSent, setForgetPasswordCodeSent] = useState(false);
 
   const onSubmit = (data) => {
-    console.log("Form Data:", data);
     if (data) {
       setForgetPasswordCodeSent(true);
     }
