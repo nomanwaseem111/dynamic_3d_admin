@@ -18,6 +18,7 @@ export const AuthContext = ({ children }) => {
     }
   };
 
+
   const getAuthSession = async () => {
     try {
       const { tokens } = await fetchAuthSession({ forceRefresh: true });

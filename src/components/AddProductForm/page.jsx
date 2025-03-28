@@ -7,6 +7,7 @@ import { rightArrowIcon, starIcon } from "../../../public";
 import { toast } from "react-toastify";
 import { useAuth } from "../../context/AuthContext";
 import { useRouter } from "next/navigation";
+import { Loader } from "../Loader";
 
 export const AddProductForm = () => {
   const {
@@ -52,6 +53,7 @@ export const AddProductForm = () => {
   const [isUnderline, setIsUnderline] = useState(false);
   const [fontDropdownOpen, setFontDropdownOpen] = useState(false);
   const [sizeDropdownOpen, setSizeDropdownOpen] = useState(false);
+  const [isLoader, setIsLoader] = useState(false);
 
   const fonts = [
     "Montserrat",
@@ -110,21 +112,39 @@ export const AddProductForm = () => {
     e.stopPropagation();
     if (!isDragging) setIsDragging(true);
   };
+  // const handleDrop = (e) => {
+  //   e.preventDefault();
+  //   e.stopPropagation();
+  //   setIsDragging(false);
+  //   if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+  //     handleFiles(e.dataTransfer.files);
+  //   }
+  // };
+
   const handleDrop = (e) => {
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(false);
+
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       handleFiles(e.dataTransfer.files);
+      e.dataTransfer.clearData(); // Clear dragged files to allow re-uploading the same file
     }
   };
 
   const handleUploadClick = () => {
     if (fileInputRef.current) fileInputRef.current.click();
   };
+  // const handleFileInputChange = (e) => {
+  //   if (e.target.files && e.target.files.length > 0) {
+  //     handleFiles(e.target.files);
+  //   }
+  // };
+
   const handleFileInputChange = (e) => {
     if (e.target.files && e.target.files.length > 0) {
       handleFiles(e.target.files);
+      e.target.value = ""; // Reset file input to allow re-selecting the same file
     }
   };
 
@@ -184,6 +204,8 @@ export const AddProductForm = () => {
   };
 
   const onSubmit = async (data) => {
+    setIsLoader(true);
+
     const payload = {
       productName: data.productName,
       sku: data.sku,
@@ -203,7 +225,6 @@ export const AddProductForm = () => {
     };
 
     try {
-      // 2) Create the product & get presigned URLs
       const response = await fetch(
         "https://s51b3gg2hh.execute-api.us-east-1.amazonaws.com/dev/create-product",
         {
@@ -217,16 +238,11 @@ export const AddProductForm = () => {
       );
 
       if (!response.ok) {
-        console.error("API Error:", response.statusText);
-        return;
+        throw new Error(`API Error: ${response.statusText}`);
       }
 
       const responseData = await response.json();
-      console.log("presignedUrls", responseData);
-
       const presignedUrls = responseData?.presignedUrls;
-
-      console.log("presignedUrls", presignedUrls);
 
       for (let i = 0; i < data.images.length; i++) {
         const file = data.images[i].file;
@@ -239,32 +255,28 @@ export const AddProductForm = () => {
 
         const putResp = await fetch(url, {
           method: "PUT",
-          headers: {
-            "Content-Type": file.type,
-          },
+          headers: { "Content-Type": file.type },
           body: file,
           mode: "cors",
         });
 
-        console.log("putResp", putResp);
-
-        if (putResp.ok) {
-          console.log(`Image #${i} (${file.name}) uploaded successfully`);
-        } else {
+        if (!putResp.ok) {
           const errorText = await putResp.text();
           throw new Error(
-            `Failed to upload image #${i} (${file.name}). 
-             Status: ${putResp.status}. 
-             ${errorText}`
+            `Failed to upload image #${i} (${file.name}). Status: ${putResp.status}. ${errorText}`
           );
         }
       }
+
       reset();
       setContent("");
       router.push("/products");
-      toast.success("Add Product successfully!");
+      toast.success("Product added successfully!");
     } catch (error) {
       console.error("Error submitting form:", error);
+      toast.error("Failed to add product. Please try again.");
+    } finally {
+      setIsLoader(false);
     }
   };
 
@@ -281,20 +293,12 @@ export const AddProductForm = () => {
             </Link>
             Add Product
           </h1>
-          <div className="flex w-full max-w-[330px] justify-between items-center flex-wrap">
-            <Button
-              type="button"
-              className="skew-x-[-30deg] flex justify-center uppercase items-center rounded-[12px] font-bold border border-[#B2D235] h-[50px] w-full max-w-[145px]"
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              className="skew-x-[-30deg] flex justify-center uppercase items-center rounded-[12px] font-bold btn text-[#000] h-[50px] w-full max-w-[165px]"
-            >
-              Save
-            </Button>
-          </div>
+          <Button
+            type="submit"
+            className="skew-x-[-30deg] flex justify-center uppercase items-center rounded-[12px] font-bold btn text-[#000] h-[50px] w-full max-w-[165px]"
+          >
+            {isLoader ? <Loader /> : "Save"}
+          </Button>
         </div>
 
         <div className="mb-8 mt-[37.5px] bg-[#141414] rounded-[20px] p-[35px]">

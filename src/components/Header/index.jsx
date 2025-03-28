@@ -9,38 +9,44 @@ import { signOut } from "aws-amplify/auth";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../context/AuthContext";
+import { Loader } from "../Loader";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isLoader, setIsLoader] = useState(false);
 
-  const {setters} = useAuth()
+  const { states, setters } = useAuth();
 
   const router = useRouter();
 
   const handleSignOut = async () => {
+    setIsLoader(true);
+
     try {
       await signOut();
       setters.setUser(null);
       setters.setToken(null);
       localStorage.clear();
       document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+      setIsLoader(false);
 
       router.push("/signin");
     } catch (error) {
       toast.error(error.message);
+      setIsLoader(false);
     }
   };
 
   return (
     <header className="w-full navbar z-10 text-white">
       <div className="w-[90%] mx-auto py-3 flex items-center h-[96px] justify-between">
-        <Link href="/" className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2">
           <Image
             src={LoginLogo}
             alt="LoginLogo"
             className="w-[200px] md:max-w-[273px] md:w-full h-[26px]"
           />
-        </Link>
+        </div>
 
         {/* Mobile menu button */}
         <button className="md:hidden" onClick={() => setIsOpen(!isOpen)}>
@@ -66,11 +72,15 @@ export default function Header() {
           <div>
             <p className="font-bold text-[14px] font-[montserrat]">JASON</p>
             <p className="text-[12px] text-[#808080] font-[montserrat]">
-              jason@example.com
+              {states?.user?.signInDetails?.loginId}
             </p>
           </div>
           <Button onClick={handleSignOut} className={"skew-x-[-30deg]"}>
-            <Image src={LogoutIcon} alt="LogoutIcon" />
+            {isLoader ? (
+              <Loader />
+            ) : (
+              <Image src={LogoutIcon} alt="LogoutIcon" />
+            )}
           </Button>
         </div>
 
