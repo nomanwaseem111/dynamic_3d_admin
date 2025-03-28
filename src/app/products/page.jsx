@@ -49,7 +49,6 @@ export default function Products() {
         const data = await res.json();
 
         if (data.error) {
-          // set an error state
           setFetchError(data.error);
           // optionally setProducts([]) if you want an empty array
           setProducts([]);
@@ -104,6 +103,7 @@ export default function Products() {
       setSelectedProducts(products.map((product) => product.id));
     }
   };
+  let productsData = products[0]?.products;
 
   return (
     <div className="flex flex-col h-screen font-[montserrat] bg-[#111] text-white">
@@ -121,7 +121,7 @@ export default function Products() {
             </Link>
           </header>
 
-          {products.length > 0 && (
+          {productsData?.length > 0 && (
             <div className="bg-[#141414] w-full rounded-[20px]">
               <div className="flex  no-scrollbar  p-[20px]  mb-2 overflow-x-auto whitespace-nowrap">
                 {tabs.map((tab) => (
@@ -161,60 +161,66 @@ export default function Products() {
                       </tr>
                     </thead>
                     <tbody>
-                      {products.map((product, i) => (
-                        <tr
-                          key={product.productId}
-                          className={`border-b border-[#333] ${
-                            selectedProducts.includes(product.productId)
-                              ? "bg-[rgba(155,220,40,0.1)]"
-                              : ""
-                          }`}
-                        >
-                          <td className="p-5">
-                            <input
-                              type="checkbox"
-                              checked={selectedProducts.includes(
-                                product.productId
-                              )}
-                              onChange={() =>
-                                toggleProductSelection(product.productId)
-                              }
-                              className="cursor-pointer"
-                            />
-                          </td>
-
-                          <td className="p-5 flex items-center gap-[20px]">
-                            <div className="w-10 h-10 flex items-center  rounded">
-                              <img
-                                src={products[i]?.images[0]?.imageUrl}
-                                alt=""
-                                className="w-10 h-10 object-cover"
+                      {productsData?.map((product, i) => {
+                        console.log(
+                          "product[i]?.images[0]?.imageUrl",
+                          product.images[0].imageUrl
+                        );
+                        return (
+                          <tr
+                            key={product.productId}
+                            className={`border-b border-[#333] ${
+                              selectedProducts.includes(product.productId)
+                                ? "bg-[rgba(155,220,40,0.1)]"
+                                : ""
+                            }`}
+                          >
+                            <td className="p-5">
+                              <input
+                                type="checkbox"
+                                checked={selectedProducts.includes(
+                                  product.productId
+                                )}
+                                onChange={() =>
+                                  toggleProductSelection(product.productId)
+                                }
+                                className="cursor-pointer"
                               />
-                            </div>
+                            </td>
 
-                            {product.productName}
-                          </td>
-                          <td className="p-5 truncate">{product.sku}</td>
-                          <td className="p-5">{product.categories}</td>
-                          <td className="p-5">${product.defaultPrice}.00</td>
+                            <td className="p-5 flex items-center gap-[20px]">
+                              <div className="w-10 h-10 flex items-center  rounded">
+                                <img
+                                  src={product?.images[0]?.imageUrl}
+                                  alt=""
+                                  className="w-10 h-10 object-cover"
+                                />
+                              </div>
 
-                          <td className="p-5">
-                            <button
-                            // onClick={() => toggleVisibility(product.id)}
-                            >
-                              <span
-                                className={`px-2.5 py-1 rounded text-xs font-medium ${
-                                  product.visibility
-                                    ? "bg-[#28a745] text-white"
-                                    : "bg-[#dc3545] text-white"
-                                }`}
+                              {product.productName}
+                            </td>
+                            <td className="p-5 truncate">{product.sku}</td>
+                            <td className="p-5">{product.categories}</td>
+                            <td className="p-5">${product.defaultPrice}.00</td>
+
+                            <td className="p-5">
+                              <button
+                              // onClick={() => toggleVisibility(product.id)}
                               >
-                                {product.visibility ? "Enabled" : "Disabled"}
-                              </span>
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
+                                <span
+                                  className={`px-2.5 py-1 rounded text-xs font-medium ${
+                                    product.visibility
+                                      ? "bg-[#28a745] text-white"
+                                      : "bg-[#dc3545] text-white"
+                                  }`}
+                                >
+                                  {product.visibility ? "Enabled" : "Disabled"}
+                                </span>
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })}
                     </tbody>
                   </table>
                 </div>
