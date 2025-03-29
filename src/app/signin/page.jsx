@@ -21,14 +21,17 @@ export default function SignIn() {
 
   const router = useRouter();
   const [isLoader, setIsLoader] = useState(false);
+
   const onSubmit = async (data) => {
-    setIsLoader(true);
+    if (isLoader) return; // Prevent multiple clicks
+
+    setIsLoader(true); // Disable button immediately
+
     try {
       const res = await signIn({
         username: data?.email,
         password: data?.password,
       });
-      setIsLoader(false);
 
       const { tokens } = await fetchAuthSession();
       const payload = tokens?.idToken?.payload;
@@ -36,21 +39,50 @@ export default function SignIn() {
 
       if (userType === "admin") {
         await actions.fetchAuthData();
-
-        toast.success("Login successful!");
+        toast.success("Login successful!", { id: "login_success" });
         router.push("/products");
-        setIsLoader(false);
       } else {
         signOut();
-        toast.error("Not Authorized");
-        setIsLoader(false);
+        toast.error("Not Authorized", { id: "not_authorized" });
       }
     } catch (error) {
       console.log(error);
-      toast.error(error.message);
-      setIsLoader(false);
+      toast.error(error.message, { id: "login_error" });
+    } finally {
+      setIsLoader(false); // Enable button after request completes
     }
   };
+
+  // const onSubmit = async (data) => {
+  //   setIsLoader(true);
+  //   try {
+  //     const res = await signIn({
+  //       username: data?.email,
+  //       password: data?.password,
+  //     });
+  //     setIsLoader(false);
+
+  //     const { tokens } = await fetchAuthSession();
+  //     const payload = tokens?.idToken?.payload;
+  //     const userType = payload["cognito:groups"]?.[0];
+
+  //     if (userType === "admin") {
+  //       await actions.fetchAuthData();
+
+  //       router.push("/products");
+  //       setIsLoader(false);
+  //       toast.success("Login successful!");
+  //     } else {
+  //       signOut();
+  //       toast.error("Not Authorized");
+  //       setIsLoader(false);
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //     toast.error(error.message);
+  //     setIsLoader(false);
+  //   }
+  // };
 
   // const onSubmit = async (data) => {
   //   setIsLoader(true);
@@ -144,7 +176,8 @@ export default function SignIn() {
 
             <Button
               type="submit"
-              className="flex-shrink-0 font-[600]  w-full h-[50px] btn flex justify-center items-center text-center skew-x-[-30deg] text-[18px] rounded-[12px] hover:opacity-90 transition-opacity border border-[#B2D235] text-black"
+              disabled={isLoader}
+              className={`flex-shrink-0 font-[600] ${isLoader && 'opacity-50 cursor-not-allowed'}  w-full h-[50px] btn flex justify-center items-center text-center skew-x-[-30deg] text-[18px] rounded-[12px] hover:opacity-90 transition-opacity border border-[#B2D235] text-black`}
             >
               {isLoader ? <Loader /> : "Sign In"}
             </Button>

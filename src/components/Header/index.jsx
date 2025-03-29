@@ -79,7 +79,10 @@ export default function Header() {
             {isLoader ? (
               <Loader />
             ) : (
-              <Image src={LogoutIcon} alt="LogoutIcon" />
+              <div className="flex gap-x-1">
+                <Image src={LogoutIcon} alt="LogoutIcon" />
+                Logout
+              </div>
             )}
           </Button>
         </div>

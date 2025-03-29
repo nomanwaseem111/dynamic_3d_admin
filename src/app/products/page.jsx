@@ -542,11 +542,11 @@ export default function Products() {
                   {/* Status badge */}
                   <div className="absolute top-4 right-4">
                     {selectedProduct?.visibility ? (
-                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-500 text-green-800 dark:bg-green-900 dark:text-green-100">
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-500  text-[#fff]">
                         Enabled
                       </span>
                     ) : (
-                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-red-500 text-red-800 dark:bg-red-900 dark:text-red-100">
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-red-500 text-[#fff]">
                         Disabled
                       </span>
                     )}
