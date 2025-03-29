@@ -247,6 +247,8 @@ import Button from "../../components/common/Button";
 import Link from "next/link";
 import Header from "../../components/Header";
 import { Loader } from "../../components/Loader";
+import { closeIcon } from "../../../public";
+import Image from "next/image";
 
 export default function Products() {
   const productTypeRef = useRef(null);
@@ -462,9 +464,15 @@ export default function Products() {
             </div>
           )}
 
-          {isModalOpen && selectedProduct && (
-            <div className="fixed inset-0 flex z-10 items-center justify-center bg-black bg-opacity-50">
-              <div className="bg-white p-5 rounded shadow-lg w-[400px]">
+          {/* {isModalOpen && selectedProduct && (
+            <div
+              className="fixed inset-0 flex z-10 items-center justify-center"
+              onClick={closeModal}
+            >
+              <div
+                className="bg-white p-5 rounded shadow-lg w-[400px]"
+                onClick={(e) => e.stopPropagation()}
+              >
                 <h2 className="text-xl font-bold mb-2 text-[#000]">
                   {selectedProduct.productName}
                 </h2>
@@ -481,7 +489,7 @@ export default function Products() {
                   Price: ${selectedProduct.defaultPrice}.00
                 </p>
                 <p className="text-[#000] flex w-full justify-between items-center">
-                  Status:{" "}
+                  Status:
                   <span
                     className={`px-2 py-1 rounded text-xs font-medium ${
                       selectedProduct.visibility
@@ -498,6 +506,98 @@ export default function Products() {
                 >
                   Close
                 </button>
+              </div>
+            </div>
+          )} */}
+
+          {isModalOpen && (
+            <div
+              className="fixed inset-0 z-50 flex items-center justify-center"
+              onClick={closeModal}
+            >
+              {/* Backdrop with blur effect */}
+              <div className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200" />
+
+              {/* Modal content */}
+              <div
+                className="relative bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-md mx-4 overflow-hidden animate-in zoom-in-95 duration-200"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {/* Product image section */}
+                <div className="relative w-full h-64 bg-gray-100 dark:bg-gray-800">
+                  {selectedProduct?.images?.[0]?.imageUrl ? (
+                    <img
+                      src={
+                        selectedProduct.images[0].imageUrl || "/placeholder.svg"
+                      }
+                      alt={selectedProduct.productName}
+                      className="w-full h-full object-contain"
+                    />
+                  ) : (
+                    <div className="flex items-center justify-center h-full text-gray-400">
+                      No image available
+                    </div>
+                  )}
+
+                  {/* Status badge */}
+                  <div className="absolute top-4 right-4">
+                    {selectedProduct?.visibility ? (
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-500 text-green-800 dark:bg-green-900 dark:text-green-100">
+                        Enabled
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-red-500 text-red-800 dark:bg-red-900 dark:text-red-100">
+                        Disabled
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Close button */}
+                  <button
+                    onClick={closeModal}
+                    className="absolute top-4 left-4 p-1 rounded-full cursor-pointer bg-white/80 hover:bg-white text-gray-700 hover:text-gray-900 transition-colors dark:bg-gray-800/80 dark:hover:bg-gray-800 dark:text-gray-300 dark:hover:text-white"
+                    aria-label="Close modal"
+                  >
+                    {/* <X className="w-4 h-4" /> */}
+                    <Image src={closeIcon} alt="closeIcon" className="w-[15px] h-[15px]"/>
+                  </button>
+                </div>
+
+                {/* Product details section */}
+                <div className="p-6">
+                  <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
+                    {selectedProduct?.productName}
+                  </h2>
+
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                        SKU
+                      </span>
+                      <span className="font-medium text-gray-900 dark:text-white">
+                        {selectedProduct?.sku}
+                      </span>
+                    </div>
+
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                        Category
+                      </span>
+                      <span className="font-medium text-gray-900 dark:text-white">
+                        {selectedProduct?.categories}
+                      </span>
+                    </div>
+
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                        Price
+                      </span>
+                      <span className="font-bold text-lg text-gray-900 dark:text-white">
+                        ${selectedProduct?.defaultPrice.toLocaleString()}.00
+                      </span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           )}
