@@ -241,110 +241,117 @@
 
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Sidebar } from "../../components/Sidebar/page";
 import Button from "../../components/common/Button";
 import Link from "next/link";
 import Header from "../../components/Header";
 import { Loader } from "../../components/Loader";
-import { closeIcon } from "../../../public";
 import Image from "next/image";
+import { closeIcon } from "../../../public";
 
 export default function Products() {
   const productTypeRef = useRef(null);
   const brandRef = useRef(null);
 
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (
-        productTypeRef.current &&
-        !productTypeRef.current.contains(event.target)
-      ) {
-        setIsProductTypeOpen(false);
-      }
-      if (brandRef.current && !brandRef.current.contains(event.target)) {
-        setIsBrandOpen(false);
-      }
-    }
+  // Store pages: each page is an object with { products, nextToken }
+  const [pages, setPages] = useState([]);
+  const [currentPageIndex, setCurrentPageIndex] = useState(0);
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
-  const [selectedProducts, setSelectedProducts] = useState([]);
-  const [activeTab, setActiveTab] = useState("All");
-  const [products, setProducts] = useState([]);
   const [isLoader, setIsLoader] = useState(false);
   const [fetchError, setFetchError] = useState(null);
 
+  // Modal state
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // Tabs state for filtering products
+  const [activeTab, setActiveTab] = useState("All");
+  const tabs = ["All", "Visible", "Not Visible"];
+
+  // Fetch function that accepts a token (null for first page)
+  const fetchProducts = async (token = null) => {
+    setIsLoader(true);
+    setFetchError(null);
+
+    try {
+      let url =
+        "https://s51b3gg2hh.execute-api.us-east-1.amazonaws.com/dev/get-products";
+      if (token) {
+        url += `?nextToken=${encodeURIComponent(token)}`;
+      }
+      const res = await fetch(url);
+      const data = await res.json();
+
+      if (data.error) {
+        setFetchError(data.error);
+        return;
+      }
+
+      const pageData = {
+        products: data.products || [],
+        nextToken: data.nextToken || null,
+      };
+
+      // Append the new page to our pages array
+      setPages((prev) => [...prev, pageData]);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      setFetchError(error.message);
+    } finally {
+      setIsLoader(false);
+    }
+  };
+
+  // Fetch the first page on mount
+  useEffect(() => {
+    fetchProducts(); // token null for the first page
+  }, []);
+
+  // Modal functions
   const handleProductSelection = (product) => {
     setSelectedProduct(product);
     setIsModalOpen(true);
   };
 
   const closeModal = () => {
-    setSelectedProduct(null); // Reset selected product
+    setSelectedProduct(null);
     setIsModalOpen(false);
   };
 
-  useEffect(() => {
-    async function fetchProducts() {
-      setIsLoader(true);
-      setFetchError(null);
-
-      try {
-        const res = await fetch(
-          "https://s51b3gg2hh.execute-api.us-east-1.amazonaws.com/dev/get-products"
-        );
-        const data = await res.json();
-
-        if (data.error) {
-          setFetchError(data.error);
-          setProducts([]);
-          return;
-        }
-
-        setProducts(Array.isArray(data) ? data : [data]);
-      } catch (error) {
-        console.error("Error fetching products:", error);
-        setFetchError(error.message);
-      } finally {
-        setIsLoader(false);
-      }
-    }
-    fetchProducts();
-  }, []);
-
-  const tabs = ["All", "Visible", "Not Visible"];
-
-  const toggleProductSelection = (productId) => {
-    if (selectedProducts.includes(productId)) {
-      setSelectedProducts(selectedProducts.filter((id) => id !== productId));
-    } else {
-      setSelectedProducts([...selectedProducts, productId]);
-    }
+  // Get the current page (or a default if not yet loaded)
+  const currentPage = pages[currentPageIndex] || {
+    products: [],
+    nextToken: null,
   };
 
-  const toggleAllProducts = () => {
-    if (selectedProducts.length === products.length) {
-      setSelectedProducts([]);
-    } else {
-      setSelectedProducts(products.map((product) => product.id));
-    }
-  };
-
-  let productsData = products[0]?.products || [];
-
-  const filteredProducts = productsData.filter((product) => {
+  // Filter products based on activeTab
+  const filteredProducts = currentPage.products.filter((product) => {
     if (activeTab === "Visible") return product.visibility === true;
     if (activeTab === "Not Visible") return product.visibility === false;
     return true;
   });
+
+  // Handle next page click
+  const handleNextPage = async () => {
+    if (currentPage.nextToken) {
+      // If we've already fetched the next page, just move to it
+      if (pages[currentPageIndex + 1]) {
+        setCurrentPageIndex(currentPageIndex + 1);
+      } else {
+        // Otherwise, fetch the next page and update currentPageIndex
+        await fetchProducts(currentPage.nextToken);
+        setCurrentPageIndex((prev) => prev + 1);
+      }
+    }
+  };
+
+  // Handle previous page click
+  const handlePreviousPage = () => {
+    if (currentPageIndex > 0) {
+      setCurrentPageIndex(currentPageIndex - 1);
+    }
+  };
 
   return (
     <div className="flex flex-col h-screen font-[montserrat] bg-[#111] text-white">
@@ -364,6 +371,7 @@ export default function Products() {
 
           {filteredProducts.length > 0 && (
             <div className="bg-[#141414] w-full rounded-[20px]">
+              {/* Tab Navigation */}
               <div className="flex no-scrollbar p-[20px] mb-2 overflow-x-auto whitespace-nowrap">
                 {tabs.map((tab) => (
                   <button
@@ -380,6 +388,7 @@ export default function Products() {
                 ))}
               </div>
 
+              {/* Products Table */}
               <div className="w-full rounded overflow-hidden">
                 <div className="max-h-[400px] overflow-auto no-scrollbar">
                   <table className="w-full border-collapse">
@@ -403,23 +412,9 @@ export default function Products() {
                       {filteredProducts.map((product) => (
                         <tr
                           key={product.productId}
-                          className={`border-b border-[#333] ${
-                            selectedProducts.includes(product.productId)
-                              ? "bg-[rgba(155,220,40,0.1)]"
-                              : ""
-                          }`}
+                          className="border-b border-[#333]"
                         >
                           <td className="p-5">
-                            {/* <input
-                              type="checkbox"
-                              checked={selectedProducts.includes(
-                                product.productId
-                              )}
-                              onChange={() =>
-                                toggleProductSelection(product.productId)
-                              }
-                              className="cursor-pointer"
-                            /> */}
                             <input
                               type="checkbox"
                               checked={
@@ -431,11 +426,17 @@ export default function Products() {
                           </td>
                           <td className="p-5 flex items-center gap-[20px]">
                             <div className="w-10 h-10 flex items-center rounded">
-                              <img
-                                src={product?.images[0]?.imageUrl}
-                                alt=""
-                                className="w-10 h-10 object-cover"
-                              />
+                              {product?.images?.[0]?.imageUrl ? (
+                                <img
+                                  src={product.images[0].imageUrl}
+                                  alt=""
+                                  className="w-10 h-10 object-cover"
+                                />
+                              ) : (
+                                <div className="w-10 h-10 flex items-center justify-center bg-[#333]">
+                                  N/A
+                                </div>
+                              )}
                             </div>
                             {product.productName}
                           </td>
@@ -461,75 +462,50 @@ export default function Products() {
                   </table>
                 </div>
               </div>
-            </div>
-          )}
 
-          {/* {isModalOpen && selectedProduct && (
-            <div
-              className="fixed inset-0 flex z-10 items-center justify-center"
-              onClick={closeModal}
-            >
-              <div
-                className="bg-white p-5 rounded shadow-lg w-[400px]"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <h2 className="text-xl font-bold mb-2 text-[#000]">
-                  {selectedProduct.productName}
-                </h2>
-                <img
-                  src={selectedProduct?.images[0]?.imageUrl}
-                  alt=""
-                  className="w-full h-40 object-cover mb-2"
-                />
-                <p className="text-[#000]">SKU: {selectedProduct.sku}</p>
-                <p className="text-[#000]">
-                  Category: {selectedProduct.categories}
-                </p>
-                <p className="text-[#000]">
-                  Price: ${selectedProduct.defaultPrice}.00
-                </p>
-                <p className="text-[#000] flex w-full justify-between items-center">
-                  Status:
-                  <span
-                    className={`px-2 py-1 rounded text-xs font-medium ${
-                      selectedProduct.visibility
-                        ? "bg-[#28a745] text-white"
-                        : "bg-[#dc3545] text-white"
-                    }`}
-                  >
-                    {selectedProduct.visibility ? "Enabled" : "Disabled"}
-                  </span>
-                </p>
+              {/* Pagination Buttons */}
+              <div className="flex justify-between p-4">
                 <button
-                  onClick={closeModal}
-                  className="mt-4 bg-red-500 text-white px-4 py-2 rounded"
+                  onClick={handlePreviousPage}
+                  disabled={currentPageIndex === 0}
+                  className={`px-4 py-2 rounded ${
+                    currentPageIndex === 0
+                      ? "bg-gray-500 cursor-not-allowed"
+                      : "bg-[#9bdc28] text-[#000]"
+                  }`}
                 >
-                  Close
+                  Previous Page
+                </button>
+                <button
+                  onClick={handleNextPage}
+                  disabled={!currentPage.nextToken}
+                  className={`px-4 py-2 rounded ${
+                    !currentPage.nextToken
+                      ? "bg-gray-500 cursor-not-allowed"
+                      : "bg-[#9bdc28] text-[#000]"
+                  }`}
+                >
+                  Next Page
                 </button>
               </div>
             </div>
-          )} */}
+          )}
 
-          {isModalOpen && (
+          {/* Modal for product details */}
+          {isModalOpen && selectedProduct && (
             <div
               className="fixed inset-0 z-50 flex items-center justify-center"
               onClick={closeModal}
             >
-              {/* Backdrop with blur effect */}
               <div className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200" />
-
-              {/* Modal content */}
               <div
                 className="relative bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-md mx-4 overflow-hidden animate-in zoom-in-95 duration-200"
                 onClick={(e) => e.stopPropagation()}
               >
-                {/* Product image section */}
                 <div className="relative w-full h-64 bg-gray-100 dark:bg-gray-800">
                   {selectedProduct?.images?.[0]?.imageUrl ? (
                     <img
-                      src={
-                        selectedProduct.images[0].imageUrl || "/placeholder.svg"
-                      }
+                      src={selectedProduct.images[0].imageUrl}
                       alt={selectedProduct.productName}
                       className="w-full h-full object-contain"
                     />
@@ -538,37 +514,33 @@ export default function Products() {
                       No image available
                     </div>
                   )}
-
-                  {/* Status badge */}
                   <div className="absolute top-4 right-4">
                     {selectedProduct?.visibility ? (
-                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-500  text-[#fff]">
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-500 text-white">
                         Enabled
                       </span>
                     ) : (
-                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-red-500 text-[#fff]">
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-red-500 text-white">
                         Disabled
                       </span>
                     )}
                   </div>
-
-                  {/* Close button */}
                   <button
                     onClick={closeModal}
                     className="absolute top-4 left-4 p-1 rounded-full cursor-pointer bg-white/80 hover:bg-white text-gray-700 hover:text-gray-900 transition-colors dark:bg-gray-800/80 dark:hover:bg-gray-800 dark:text-gray-300 dark:hover:text-white"
                     aria-label="Close modal"
                   >
-                    {/* <X className="w-4 h-4" /> */}
-                    <Image src={closeIcon} alt="closeIcon" className="w-[15px] h-[15px]"/>
+                    <Image
+                      src={closeIcon}
+                      alt="closeIcon"
+                      className="w-[15px] h-[15px]"
+                    />
                   </button>
                 </div>
-
-                {/* Product details section */}
                 <div className="p-6">
                   <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
                     {selectedProduct?.productName}
                   </h2>
-
                   <div className="space-y-3">
                     <div className="flex justify-between items-center">
                       <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
@@ -578,7 +550,6 @@ export default function Products() {
                         {selectedProduct?.sku}
                       </span>
                     </div>
-
                     <div className="flex justify-between items-center">
                       <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
                         Category
@@ -587,13 +558,12 @@ export default function Products() {
                         {selectedProduct?.categories}
                       </span>
                     </div>
-
                     <div className="flex justify-between items-center">
                       <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
                         Price
                       </span>
                       <span className="font-bold text-lg text-gray-900 dark:text-white">
-                        ${selectedProduct?.defaultPrice.toLocaleString()}.00
+                        ${selectedProduct?.defaultPrice?.toLocaleString()}.00
                       </span>
                     </div>
                   </div>
@@ -605,6 +575,12 @@ export default function Products() {
           {fetchError && (
             <div className="text-red-400 text-2xl text-center mb-4">
               {fetchError}
+            </div>
+          )}
+
+          {isLoader && (
+            <div className="flex justify-center items-center mt-4">
+              <Loader />
             </div>
           )}
         </div>
