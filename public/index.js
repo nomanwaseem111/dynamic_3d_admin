@@ -10,6 +10,9 @@ import AvatarIcon from "./assets/avatar.svg";
 import LogoutIcon from "./assets/logout.svg";
 import ErrorImage from "./assets/404.svg";
 import closeIcon from "./assets/close.png"
+import LeftVectorIcon from "./assets/leftvectorIcon.svg"
+import RightVectorIcon from "./assets/rightvectorIcon.svg"
+import addIcon from "./assets/plusIcon.svg"
 export {
   LoginLogo,
   rightArrowIcon,
@@ -22,5 +25,8 @@ export {
   AvatarIcon,
   LogoutIcon,
   ErrorImage,
-  closeIcon
+  closeIcon,
+  LeftVectorIcon,
+  RightVectorIcon,
+  addIcon
 };

@@ -41,7 +41,7 @@ export default function Header() {
 
   return (
     <header className="w-full navbar z-10 text-white">
-      <div className="w-[90%] mx-auto py-3 flex items-center h-[96px] justify-between">
+      <div className="w-full px-[40px] mx-auto py-[10px] flex items-center h-[96px] justify-between">
         <div className="flex items-center space-x-2">
           <Image
             src={LoginLogo}

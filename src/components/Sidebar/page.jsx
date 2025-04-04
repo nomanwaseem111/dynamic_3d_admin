@@ -4,9 +4,7 @@ import React from "react";
 import { BoxIcon, HomeIcon } from "../../../public";
 import { usePathname } from "next/navigation";
 
-const navItems = [
-  { href: "/products", label: "Products", icon: BoxIcon },
-];
+const navItems = [{ href: "/products", label: "Products", icon: BoxIcon }];
 
 const SidebarLink = ({ href, label, icon, isActive }) => {
   return (
@@ -28,7 +26,7 @@ export const Sidebar = () => {
   const pathname = usePathname();
 
   return (
-    <aside className="hidden md:block w-full max-w-[350px] bg-[#111] border-r border-[#222]">
+    <aside className="hidden md:block  w-full max-w-[350px] min-h-screen bg-[#111] border-r border-[#222]">
       <nav className="p-2 space-y-1 mt-6 flex flex-col !gap-[11px] justify-center items-center">
         {navItems.map((item) => {
           const isActive = pathname === item.href;

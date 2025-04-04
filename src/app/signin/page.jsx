@@ -2,7 +2,12 @@
 import { useForm } from "react-hook-form";
 import Image from "next/image";
 import Link from "next/link";
-import { Ellipse, LoginLogo } from "../../../public";
+import {
+  Ellipse,
+  LeftVectorIcon,
+  LoginLogo,
+  RightVectorIcon,
+} from "../../../public";
 import { useState } from "react";
 import { fetchAuthSession, signIn, signOut } from "aws-amplify/auth";
 import Button from "../../components/common/Button";
@@ -49,84 +54,38 @@ export default function SignIn() {
       console.log(error);
       toast.error(error.message, { id: "login_error" });
     } finally {
-      setIsLoader(false); // Enable button after request completes
+      setIsLoader(false);
     }
   };
 
-  // const onSubmit = async (data) => {
-  //   setIsLoader(true);
-  //   try {
-  //     const res = await signIn({
-  //       username: data?.email,
-  //       password: data?.password,
-  //     });
-  //     setIsLoader(false);
-
-  //     const { tokens } = await fetchAuthSession();
-  //     const payload = tokens?.idToken?.payload;
-  //     const userType = payload["cognito:groups"]?.[0];
-
-  //     if (userType === "admin") {
-  //       await actions.fetchAuthData();
-
-  //       router.push("/products");
-  //       setIsLoader(false);
-  //       toast.success("Login successful!");
-  //     } else {
-  //       signOut();
-  //       toast.error("Not Authorized");
-  //       setIsLoader(false);
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //     toast.error(error.message);
-  //     setIsLoader(false);
-  //   }
-  // };
-
-  // const onSubmit = async (data) => {
-  //   setIsLoader(true);
-  //   try {
-  //     const res = await signIn({
-  //       username: data.email,
-  //       password: data.password,
-  //     });
-  //     console.log("res",res)
-  //     setIsLoader(false);
-  //     const { tokens } = await fetchAuthSession();
-  //     const payload = tokens?.idToken?.payload;
-  //     const userType = payload["cognito:groups"]?.[0];
-
-  //     if (userType === "admin") {
-  //       await actions.fetchAuthData();
-  //       toast.success("Login successful!");
-  //       navigate("/dashboard");
-  //       setIsLoader(false);
-  //     } else {
-  //       signOut();
-  //       toast.error("Not Authorized");
-  //       setIsLoader(false);
-  //     }
-  //   } catch (error) {
-  //     setIsLoader(false);
-  //     toast.error(error.message);
-  //   }
-  // };
-
   return (
     <div className="h-full relative flex flex-col items-center justify-center bg-[#111] p-4">
+      <Image
+        src={LeftVectorIcon}
+        alt="LeftVectorIcon"
+        className="absolute top-0 left-0 opacity-[8%]"
+      />
+      <Image
+        src={RightVectorIcon}
+        alt="RightVectorIcon"
+        className="absolute bottom-0 right-0 opacity-[8%]"
+      />
+
       <Image src={LoginLogo} alt="LoginLogo" />
 
       <div className="relative w-full max-w-md flex flex-col justify-center items-center">
-        <p className="text-white text-center text-sm mt-[17px] font-[montserrat]">
-          LOG IN TO YOUR STORE
-        </p>
-        <div className="login-container p-6 rounded-[24px] w-full max-w-sm z-10 mt-[46px]">
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <div className="login-container relative z-20 p-6 rounded-[24px] w-full max-w-sm  mt-[46px]">
+          <p className="text-white text-center min-h-[50px]  flex justify-center items-center font-bold text-[16px] font-[montserrat]">
+            LOG IN TO YOUR STORE
+          </p>
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="space-y-4 mt-[24px]"
+          >
             <div>
               <label
                 htmlFor="email"
-                className="block text-white mb-1 font-[montserrat]"
+                className="block text-white mb-1 font-bold font-[montserrat]"
               >
                 Email
               </label>
@@ -135,7 +94,7 @@ export default function SignIn() {
                 id="email"
                 placeholder="example@domain.com"
                 {...register("email", { required: "Email is required" })}
-                className="w-full bg-[#222] border border-[#333] text-white p-2 rounded font-[montserrat]"
+                className="w-full  border border-[#333] text-white p-2 h-[43px] font-[montserrat] rounded-[8px]"
               />
               {errors.email && (
                 <p className="text-red-500 text-sm">{errors.email.message}</p>
@@ -145,7 +104,7 @@ export default function SignIn() {
             <div>
               <label
                 htmlFor="password"
-                className="block text-white mb-1 font-[montserrat]"
+                className="block text-white mb-1 font-bold  font-[montserrat]"
               >
                 Password
               </label>
@@ -156,7 +115,7 @@ export default function SignIn() {
                 {...register("password", {
                   required: "Password is required",
                 })}
-                className="w-full bg-[#222] border border-[#333] text-white p-2 rounded font-[montserrat]"
+                className="w-full  border border-[#333] text-white p-2 rounded-[8px] h-[43px] font-[montserrat]"
               />
               {errors.password && (
                 <p className="text-red-500 text-sm">
@@ -177,7 +136,9 @@ export default function SignIn() {
             <Button
               type="submit"
               disabled={isLoader}
-              className={`flex-shrink-0 font-[600] ${isLoader && 'opacity-50 cursor-not-allowed'}  w-full h-[50px] btn flex justify-center items-center text-center skew-x-[-30deg] text-[18px] rounded-[12px] hover:opacity-90 transition-opacity border border-[#B2D235] text-black`}
+              className={`flex-shrink-0 font-[600] ${
+                isLoader && "opacity-50 cursor-not-allowed"
+              }  w-full h-[50px] btn flex justify-center items-center font-bold text-center skew-x-[-30deg] text-[18px] rounded-[12px] hover:opacity-90 transition-opacity border border-[#B2D235] text-black`}
             >
               {isLoader ? <Loader /> : "Sign In"}
             </Button>
