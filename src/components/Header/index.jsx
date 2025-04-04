@@ -17,6 +17,8 @@ export default function Header() {
 
   const { states, setters } = useAuth();
 
+  console.log(states?.userDetails);
+
   const router = useRouter();
 
   const handleSignOut = async () => {
@@ -70,9 +72,11 @@ export default function Header() {
         <div className={`hidden md:flex items-center space-x-4`}>
           <Image src={AvatarIcon} alt="AvatarIcon" />
           <div>
-            <p className="font-bold text-[14px] font-[montserrat]">JASON</p>
+            <p className="font-bold text-[14px] font-[montserrat]">
+              {`${states?.userDetails?.given_name} ${states?.userDetails?.family_name}`}
+            </p>
             <p className="text-[12px] text-[#808080] font-[montserrat]">
-              {states?.user?.signInDetails?.loginId}
+              {states?.userDetails?.email}
             </p>
           </div>
           <Button onClick={handleSignOut} className={"skew-x-[-30deg]"}>

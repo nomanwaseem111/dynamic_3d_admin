@@ -1,17 +1,21 @@
 "use client";
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { fetchAuthSession, getCurrentUser } from "aws-amplify/auth";
+import { fetchAuthSession, fetchUserAttributes, getCurrentUser } from "aws-amplify/auth";
 import { useRouter } from "next/navigation";
 export const createAuthContext = createContext();
 
 export const AuthContext = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [userDetails, setUserDetails] = useState(null);
+
   const [token, setToken] = useState(null);
   const router = useRouter();
 
   const getUser = async () => {
     try {
       const user = await getCurrentUser();
+      const users = await fetchUserAttributes()
+      setUserDetails(users)
       setUser(user);
     } catch (err) {
       // toast.error("Error fetching user");
@@ -56,6 +60,7 @@ export const AuthContext = ({ children }) => {
   const states = {
     user,
     token,
+    userDetails
   };
   const setters = {
     setUser,
