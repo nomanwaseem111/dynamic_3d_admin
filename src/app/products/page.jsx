@@ -103,6 +103,16 @@ export default function Products() {
     }
   };
 
+  useEffect(() => {
+    if (isModalOpen) {
+      document.documentElement.style.overflow = "hidden";
+      document.body.style.overflow = "hidden";
+    } else {
+      document.documentElement.style.overflow = "";
+      document.body.style.overflow = "";
+    }
+  }, [isModalOpen]);
+
   return (
     <div className="flex flex-col min-h-full font-[montserrat] bg-[#111]  text-white">
       <Header />
