@@ -75,34 +75,28 @@ export default function Products() {
     setIsModalOpen(false);
   };
 
-  // Get the current page (or a default if not yet loaded)
   const currentPage = pages[currentPageIndex] || {
     products: [],
     nextToken: null,
   };
 
-  // Filter products based on activeTab
   const filteredProducts = currentPage.products.filter((product) => {
     if (activeTab === "Visible") return product.visibility === true;
     if (activeTab === "Not Visible") return product.visibility === false;
     return true;
   });
 
-  // Handle next page click
   const handleNextPage = async () => {
     if (currentPage.nextToken) {
-      // If we've already fetched the next page, just move to it
       if (pages[currentPageIndex + 1]) {
         setCurrentPageIndex(currentPageIndex + 1);
       } else {
-        // Otherwise, fetch the next page and update currentPageIndex
         await fetchProducts(currentPage.nextToken);
         setCurrentPageIndex((prev) => prev + 1);
       }
     }
   };
 
-  // Handle previous page click
   const handlePreviousPage = () => {
     if (currentPageIndex > 0) {
       setCurrentPageIndex(currentPageIndex - 1);
@@ -134,7 +128,6 @@ export default function Products() {
 
           {filteredProducts.length > 0 && (
             <div className="bg-[#141414]  w-full rounded-[20px]">
-              {/* Tab Navigation */}
               <div className="flex gap-3 no-scrollbar p-[20px] mb-2 overflow-x-auto whitespace-nowrap">
                 {tabs.map((tab) => (
                   <button
@@ -151,7 +144,6 @@ export default function Products() {
                 ))}
               </div>
 
-              {/* Products Table */}
               <div className="w-full rounded overflow-hidden">
                 <div className=" overflow-auto no-scrollbar">
                   <table className="w-full border-collapse">
@@ -211,8 +203,8 @@ export default function Products() {
                               <span
                                 className={`px-2.5 py-1 rounded text-xs font-medium ${
                                   product.visibility
-                                    ? "bg-[#28a745] text-white"
-                                    : "bg-[#dc3545] text-white"
+                                    ? "bg-[#0B9B00] text-white"
+                                    : "bg-red-800 text-white"
                                 }`}
                               >
                                 {product.visibility ? "Enabled" : "Disabled"}
@@ -226,7 +218,6 @@ export default function Products() {
                 </div>
               </div>
 
-              {/* Pagination Buttons */}
               <div className="flex gap-5 justify-end items-center  p-4">
                 <button
                   onClick={handlePreviousPage}
@@ -258,81 +249,57 @@ export default function Products() {
             </div>
           )}
 
-          {/* Modal for product details */}
           {isModalOpen && selectedProduct && (
             <div
-              className="fixed inset-0 z-50 flex items-center justify-center"
               onClick={closeModal}
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200  flex items-center justify-center p-4 z-50"
             >
-              <div className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200" />
               <div
-                className="relative bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-md mx-4 overflow-hidden animate-in zoom-in-95 duration-200"
+                className="relative w-full max-w-[394px] bg-[#1a1a1a] border border-[#282828] rounded-xl overflow-hidden shadow-xl"
                 onClick={(e) => e.stopPropagation()}
               >
-                <div className="relative w-full h-64 bg-gray-100 dark:bg-gray-800">
-                  {selectedProduct?.images?.[0]?.imageUrl ? (
+                <button
+                  onClick={closeModal}
+                  className="absolute top-3 right-3 cursor-pointer text-gray-400 hover:text-white z-10"
+                  aria-label="Close"
+                >
+                  <Image src={closeIcon} alt="closeIcon" />
+                </button>
+
+                <div className="flex justify-center">
+                  <div className="h-[309px] relative">
                     <img
                       src={selectedProduct.images[0].imageUrl}
                       alt={selectedProduct.productName}
-                      className="w-full h-full object-contain"
+                      className="w-full h-full object-cover"
                     />
-                  ) : (
-                    <div className="flex items-center justify-center h-full text-gray-400">
-                      No image available
-                    </div>
-                  )}
-                  <div className="absolute top-4 right-4">
-                    {selectedProduct?.visibility ? (
-                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-500 text-white">
-                        Enabled
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-red-500 text-white">
-                        Disabled
-                      </span>
-                    )}
                   </div>
-                  <button
-                    onClick={closeModal}
-                    className="absolute top-4 left-4 p-1 rounded-full cursor-pointer bg-white/80 hover:bg-white text-gray-700 hover:text-gray-900 transition-colors dark:bg-gray-800/80 dark:hover:bg-gray-800 dark:text-gray-300 dark:hover:text-white"
-                    aria-label="Close modal"
-                  >
-                    <Image
-                      src={closeIcon}
-                      alt="closeIcon"
-                      className="w-[15px] h-[15px]"
-                    />
-                  </button>
                 </div>
-                <div className="p-6">
-                  <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
+
+                <div className="p-4  bg-[#0F0F0F]">
+                  <div className="inline-block px-3 py-[6px] bg-[#B2D235] text-black text-xs font-[600] rounded-[8px] skew-x-[-30deg] mb-2">
+                    <p className="skew-x-[30deg]">{selectedProduct?.sku}</p>
+                  </div>
+
+                  <h3 className="text-white text-[28px] line-clamp-1 font-bold mb-1">
                     {selectedProduct?.productName}
-                  </h2>
-                  <div className="space-y-3">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                        SKU
-                      </span>
-                      <span className="font-medium text-gray-900 dark:text-white">
-                        {selectedProduct?.sku}
-                      </span>
+                  </h3>
+                  <p className="text-gray-400 text-sm mb-3">3D Scanners</p>
+
+                  <div className="flex items-center justify-between mt-2">
+                    <div className="text-white text-[36px] font-bold">
+                      ${selectedProduct?.defaultPrice?.toLocaleString()}.00
                     </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                        Category
-                      </span>
-                      <span className="font-medium text-gray-900 dark:text-white">
-                        {selectedProduct?.categories}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                        Price
-                      </span>
-                      <span className="font-bold text-lg text-gray-900 dark:text-white">
-                        ${selectedProduct?.defaultPrice?.toLocaleString()}.00
-                      </span>
-                    </div>
+
+                    {selectedProduct?.visibility ? (
+                      <button className="px-3 py-1 bg-[#0B9B00] text-white text-sm rounded-md">
+                        Enabled
+                      </button>
+                    ) : (
+                      <button className="px-3 py-1 bg-red-800 text-white text-sm rounded-md">
+                        Disabled
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
