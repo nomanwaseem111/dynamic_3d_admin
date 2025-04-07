@@ -269,7 +269,7 @@ export default function Products() {
                 <div className="flex justify-center">
                   <div className="h-[309px] relative">
                     <img
-                      src={selectedProduct.images[0].imageUrl}
+                      src={selectedProduct?.images[0]?.imageUrl}
                       alt={selectedProduct.productName}
                       className="w-full h-full object-cover"
                     />
