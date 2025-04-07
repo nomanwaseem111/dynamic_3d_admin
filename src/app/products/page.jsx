@@ -131,7 +131,7 @@ export default function Products() {
                   />
                 }
                 children="Add Product"
-                className="skew-x-[-30deg] btn uppercase text-[12.562px] w-[180px] gap-1  rounded-[9.421px] h-[56px] font-bold flex justify-center items-center text-[#000]"
+                className="skew-x-[-30deg] btn uppercase text-[12.562px] w-[160px] gap-1  rounded-[9.421px] h-[40px] font-bold flex justify-center items-center text-[#000]"
               />
             </Link>
           </header>
