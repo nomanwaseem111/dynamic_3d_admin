@@ -294,7 +294,9 @@ export default function Products() {
                   <h3 className="text-white text-[28px] line-clamp-1 font-bold mb-1">
                     {selectedProduct?.productName}
                   </h3>
-                  <p className="text-gray-400 text-sm mb-3">3D Scanners</p>
+                  <p className="text-gray-400 text-sm mb-3">
+                    {selectedProduct?.categories}
+                  </p>
 
                   <div className="flex items-center justify-between mt-2">
                     <div className="text-white text-[36px] font-bold">
