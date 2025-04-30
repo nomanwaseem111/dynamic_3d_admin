@@ -1,0 +1,135 @@
+service: dynamic-3d
+
+frameworkVersion: "3"
+
+custom:
+  prefix: ${self:service}-${self:provider.stage}
+
+plugins:
+  - serverless-iam-roles-per-function
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  stage: dev
+  region: us-east-1
+  profile: GeeksVisor
+  environment:
+    PRODUCTS_TABLE_NAME: ProductsTable
+
+functions:
+  # Product Flow
+  createProductFunction:
+    handler: functions/products/create.handler
+    timeout: 29
+    environment:
+      PRODUCT_TABLE: !Ref ProductsTable
+      STOREFRONT_TABLE: !Ref StorefrontsTable
+      PRODUCT_BUCKET_NAME: !Ref ProductBucket
+    events:
+      - http:
+          path: /create-product
+          method: POST
+          cors: true
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "dynamodb:PutItem"
+        Resource:
+          - Fn::GetAtt: [ProductsTable, Arn]
+          - Fn::GetAtt: [StorefrontsTable, Arn]
+
+  getProductsFunction:
+    handler: functions/products/list.handler
+    timeout: 29
+    environment:
+      PRODUCT_TABLE: !Ref ProductsTable
+      PRODUCT_BUCKET_NAME: !Ref ProductBucket
+    events:
+      - http:
+          path: /get-products
+          method: GET
+          cors: true
+          authorizer:
+            name: CognitoAuthorizer
+            type: COGNITO_USER_POOLS
+            arn: !GetAtt Dynamic3dUserPool.Arn
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "dynamodb:Scan"
+        Resource:
+          - Fn::GetAtt: [ProductsTable, Arn]
+
+  # Get product by ID
+  getProductsById:
+    handler: functions/products/getProductsById.handler
+    timeout: 29
+    environment:
+      PRODUCT_TABLE: !Ref ProductsTable
+      PRODUCT_BUCKET_NAME: !Ref ProductBucket
+    events:
+      - http:
+          path: /get-product/{productId}  
+          method: GET
+          cors: true
+          # authorizer:
+          #   name: CognitoAuthorizer
+          #   type: COGNITO_USER_POOLS
+          #   arn: !GetAtt Dynamic3dUserPool.Arn
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "dynamodb:GetItem"
+        Resource:
+          - Fn::GetAtt: [ProductsTable, Arn]
+
+  # Delete product 
+  deleteProductFunction:
+    handler: functions/products/deleteproductById.handler
+    timeout: 15
+    environment:
+      PRODUCT_TABLE: !Ref ProductsTable
+      PRODUCT_BUCKET_NAME: !Ref ProductBucket
+    events:
+      - http:
+          path: /delete-product/{id}
+          method: DELETE
+          cors: true
+          authorizer:
+            name: CognitoAuthorizer
+            type: COGNITO_USER_POOLS
+            arn: !GetAtt Dynamic3dUserPool.Arn
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "dynamodb:GetItem"
+          - "dynamodb:DeleteItem" 
+        Resource:
+          - Fn::GetAtt: [ProductsTable, Arn]
+      - Effect: "Allow"
+        Action:
+          - "s3:DeleteObject"
+        Resource:
+         - !Sub arn:aws:s3:::dynamic-3d-dev-product/products/
+
+  updateProductById:
+    handler: functions/products/UpdateProduct.handler
+    timeout: 29
+    environment:
+      PRODUCT_TABLE: !Ref ProductsTable
+      PRODUCT_BUCKET_NAME: !Ref ProductBucket
+    events:
+      - http:
+          path: /update-product/{productId}
+          method: PUT
+          cors: true
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "dynamodb:UpdateItem"
+        Resource:
+          - Fn::GetAtt: [ProductsTable, Arn]
+
+
+resources: ${file(resources.yml)}

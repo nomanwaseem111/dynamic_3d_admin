@@ -1,0 +1,142 @@
+Resources:
+  #cognito configuration
+  Dynamic3dUserPool:
+    Type: "AWS::Cognito::UserPool"
+    Properties:
+      UserPoolName: ${self:custom.prefix}-user-pool
+      AutoVerifiedAttributes:
+        - email
+      UsernameAttributes:
+        - email
+      Schema:
+        - AttributeDataType: String
+          Name: email
+          Mutable: true
+          Required: true
+        - AttributeDataType: String
+          Name: given_name
+          Mutable: true
+          Required: true
+        - AttributeDataType: String
+          Name: family_name
+          Mutable: true
+          Required: true
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+          RequireLowercase: true
+          RequireNumbers: true
+          RequireSymbols: true
+          RequireUppercase: true
+
+  #UserPool Client Id
+  Dynamic3dUserPoolClient:
+    Type: "AWS::Cognito::UserPoolClient"
+    Properties:
+      UserPoolId:
+        Ref: Dynamic3dUserPool
+      GenerateSecret: false
+      ClientName: dynamic3D-client
+      RefreshTokenValidity: 60
+      AllowedOAuthFlowsUserPoolClient: true
+      ExplicitAuthFlows:
+        - ALLOW_USER_SRP_AUTH
+        - ALLOW_REFRESH_TOKEN_AUTH
+      AllowedOAuthScopes:
+        - "email"
+        - "openid"
+        - "profile"
+      SupportedIdentityProviders:
+        - COGNITO
+      AllowedOAuthFlows:
+        - "implicit"
+        - "code"
+      CallbackURLs:
+        - http://localhost:3000
+      LogoutURLs:
+        - http://localhost:3000
+  
+  # UserPool--Domain
+  Dynamic3dUserPoolDomain:
+    Type: AWS::Cognito::UserPoolDomain
+    Properties:
+      Domain: ${self:custom.prefix}-dynamic-3d-dev-domain-123456 
+      UserPoolId: !Ref Dynamic3dUserPool
+
+  # LatestUserPool Groups
+  UserGroup:
+    Type: "AWS::Cognito::UserPoolGroup"
+    Properties:
+      GroupName: "users"
+      UserPoolId: !Ref Dynamic3dUserPool
+      Description: "Group for regular users"
+  AdminGroup:
+    Type: "AWS::Cognito::UserPoolGroup"
+    Properties:
+      GroupName: "admin"
+      UserPoolId: !Ref Dynamic3dUserPool
+      Description: "Group for admin users"
+
+  #Product Table Configuration
+  ProductsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: ${self:custom.prefix}-products-table
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: "productId"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "productId"
+          KeyType: "HASH"
+
+  #Storefront Table Configuration
+  StorefrontsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: ${self:custom.prefix}-storefront-table
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: "storefrontId"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "storefrontId"
+          KeyType: "HASH"
+
+  # S3 Bucket for NewsLetter
+  ProductBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: ${self:custom.prefix}-product
+      CorsConfiguration:
+        CorsRules:
+          - AllowedMethods:
+              - GET
+              - PUT
+            AllowedOrigins:
+              - "*"
+            AllowedHeaders:
+              - "*"
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
+
+  ProductBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref ProductBucket
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Action:
+              - "s3:GetObject"
+              - "s3:PutObject"
+            Effect: Allow
+            Resource: !Join
+              - ""
+              - - "arn:aws:s3:::"
+                - !Ref ProductBucket
+                - /*
+            Principal: "*"
