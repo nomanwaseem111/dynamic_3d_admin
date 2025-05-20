@@ -33,10 +33,18 @@ export default function Products() {
     try {
       let url =
         "https://s51b3gg2hh.execute-api.us-east-1.amazonaws.com/dev/get-products";
-      if (token) {
-        url += `?nextToken=${encodeURIComponent(token)}`;
-      }
-      const res = await fetch(url);
+
+      const params = token?.nextToken ? `?nextToken=${encodeURIComponent(token)}` : '';
+      url += params;
+
+      const res = await fetch(url, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`, 
+          'Content-Type': 'application/json',
+        },
+      });
+
       const data = await res.json();
 
       if (data.error) {
@@ -49,7 +57,6 @@ export default function Products() {
         nextToken: data.nextToken || null,
       };
 
-      // Append the new page to our pages array
       setPages((prev) => [...prev, pageData]);
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -146,7 +153,7 @@ export default function Products() {
                       activeTab === tab
                         ? "!border-[#9bdc28] text-[#9bdc28] border "
                         : "text-[#aaa] hover:text-[#fff] hover:bg-[#292929]"
-                    }`}
+                      }`}
                     onClick={() => setActiveTab(tab)}
                   >
                     <p className="skew-x-[30deg] text-[14px]">{tab}</p>
@@ -215,7 +222,7 @@ export default function Products() {
                                   product.visibility
                                     ? "bg-[#0B9B00] text-white"
                                     : "bg-red-800 text-white"
-                                }`}
+                                  }`}
                               >
                                 {product.visibility ? "Enabled" : "Disabled"}
                               </span>
@@ -236,7 +243,7 @@ export default function Products() {
                     currentPageIndex === 0
                       ? "bg-[#474747] cursor-not-allowed text-[#323232]"
                       : "bg-[#9bdc28] text-[#000] cursor-pointer"
-                  }`}
+                    }`}
                 >
                   <p className="skew-x-[30deg] text-[12.562px] font-[Montserrat] uppercase">
                     Previous
@@ -249,7 +256,7 @@ export default function Products() {
                     !currentPage.nextToken
                       ? "bg-[#474747] cursor-not-allowed text-[#323232]"
                       : "bg-[#9bdc28] text-[#000] cursor-pointer"
-                  }`}
+                    }`}
                 >
                   <p className="skew-x-[30deg] text-[12.562px] font-[Montserrat] uppercase">
                     Next
