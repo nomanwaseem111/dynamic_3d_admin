@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+@theme {
+  --font-arial: Arial;
+}
+
 html {
   height: 100%;
 }
@@ -57,4 +61,47 @@ input[type="number"] {
   border-radius: 12px;
   border: 1px dashed var(--dynamic-3-d-com-atlantis, #b2d235);
   background: rgba(178, 210, 53, 0.03);
+}
+
+.border-gradient {
+  border: 2px solid;
+  border-image: linear-gradient(to right, #B2D235, #81BF41) 1;
+}
+
+.custom-quill .ql-container {
+  border: none !important;
+  background-color: transparent;
+  padding: 0;
+}
+
+.custom-quill .ql-editor {
+  min-height: 211px;
+  padding: 0;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 16px;
+  color: #ccc;
+  background-color: transparent;
+  line-height: 1.6;
+}
+
+.custom-quill .ql-editor:focus {
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.ql-font-montserrat {
+  font-family: 'Montserrat', sans-serif;
+}
+
+.ql-font-arial {
+  font-family: Arial, sans-serif;
+}
+
+.ql-font-helvetica {
+  font-family: Helvetica, sans-serif;
+}
+
+.ql-font-times-new-roman {
+  font-family: 'Times New Roman', serif;
 }

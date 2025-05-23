@@ -8,10 +8,14 @@ import Header from "../../components/Header";
 import { Loader } from "../../components/Loader";
 import Image from "next/image";
 import { addIcon, closeIcon } from "../../../public";
+import { useRouter } from 'next/navigation'
 
 export default function Products() {
+  const router = useRouter();
+
   // Store pages: each page is an object with { products, nextToken }
   const [pages, setPages] = useState([]);
+  console.log("pages", pages);
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
 
   const [isLoader, setIsLoader] = useState(false);
@@ -26,21 +30,21 @@ export default function Products() {
   const tabs = ["All", "Visible", "Not Visible"];
 
   // Fetch function that accepts a token (null for first page)
-  const fetchProducts = async (token = null) => {
+  const fetchProducts = async (nextToken = null) => {
     setIsLoader(true);
     setFetchError(null);
 
     try {
-      let url =
-        "https://s51b3gg2hh.execute-api.us-east-1.amazonaws.com/dev/get-products";
+      let url = "https://s51b3gg2hh.execute-api.us-east-1.amazonaws.com/dev/get-products";
 
-      const params = token?.nextToken ? `?nextToken=${encodeURIComponent(token)}` : '';
-      url += params;
+      if (nextToken) {
+        url += `?nextToken=${nextToken}`;
+      }
 
       const res = await fetch(url, {
         method: 'GET',
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`, 
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
           'Content-Type': 'application/json',
         },
       });
@@ -71,6 +75,16 @@ export default function Products() {
     fetchProducts(); // token null for the first page
   }, []);
 
+  const goToDetail = (product) => {
+    const slug = product.productName
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, "-")
+      .replace(/[^a-z0-9\-]/g, "");
+
+    router.push(`/product-info/${slug}/${product.productId}`);
+  };
+
   // Modal functions
   const handleProductSelection = (product) => {
     setSelectedProduct(product);
@@ -94,19 +108,20 @@ export default function Products() {
   });
 
   const handleNextPage = async () => {
-    if (currentPage.nextToken) {
-      if (pages[currentPageIndex + 1]) {
-        setCurrentPageIndex(currentPageIndex + 1);
-      } else {
-        await fetchProducts(currentPage.nextToken);
-        setCurrentPageIndex((prev) => prev + 1);
-      }
+    if (isLoader) return;
+    const token = currentPage.nextToken;
+    if (!token) return;
+    if (pages[currentPageIndex + 1]) {
+      setCurrentPageIndex(currentPageIndex + 1);
+      return;
     }
+    await fetchProducts(token);
+    setCurrentPageIndex((prev) => prev + 1);
   };
 
   const handlePreviousPage = () => {
     if (currentPageIndex > 0) {
-      setCurrentPageIndex(currentPageIndex - 1);
+      setCurrentPageIndex(prev => Math.max(prev - 1, 0))
     }
   };
 
@@ -119,6 +134,8 @@ export default function Products() {
       document.body.style.overflow = "";
     }
   }, [isModalOpen]);
+
+  const isNextDisabled = !currentPage.nextToken || isLoader;
 
   return (
     <div className="flex flex-col min-h-full font-[montserrat] bg-[#111]  text-white">
@@ -149,10 +166,9 @@ export default function Products() {
                 {tabs.map((tab) => (
                   <button
                     key={tab}
-                    className={`bg-transparent font-[montserrat]   rounded-[8px] skew-x-[-30deg]  px-4 py-2.5 cursor-pointer relative ${
-                      activeTab === tab
-                        ? "!border-[#9bdc28] text-[#9bdc28] border "
-                        : "text-[#aaa] hover:text-[#fff] hover:bg-[#292929]"
+                    className={`bg-transparent font-[montserrat]   rounded-[8px] skew-x-[-30deg]  px-4 py-2.5 cursor-pointer relative ${activeTab === tab
+                      ? "!border-[#9bdc28] text-[#9bdc28] border "
+                      : "text-[#aaa] hover:text-[#fff] hover:bg-[#292929]"
                       }`}
                     onClick={() => setActiveTab(tab)}
                   >
@@ -184,7 +200,8 @@ export default function Products() {
                       {filteredProducts.map((product) => (
                         <tr
                           key={product.productId}
-                          className="border-b border-[#333]"
+                          onClick={() => goToDetail(product)}
+                          className="border-b border-[#333] cursor-pointer hover:bg-[#ffffff1f]"
                         >
                           <td className="p-5">
                             <input
@@ -218,10 +235,9 @@ export default function Products() {
                           <td className="p-3">
                             <button>
                               <span
-                                className={`px-2.5 py-1 rounded text-xs font-medium ${
-                                  product.visibility
-                                    ? "bg-[#0B9B00] text-white"
-                                    : "bg-red-800 text-white"
+                                className={`px-2.5 py-1 rounded text-xs font-medium ${product.visibility
+                                  ? "bg-[#0B9B00] text-white"
+                                  : "bg-red-800 text-white"
                                   }`}
                               >
                                 {product.visibility ? "Enabled" : "Disabled"}
@@ -239,10 +255,9 @@ export default function Products() {
                 <button
                   onClick={handlePreviousPage}
                   disabled={currentPageIndex === 0}
-                  className={`px-4 py-2 rounded-[9.421px] font-bold  skew-x-[-30deg] ${
-                    currentPageIndex === 0
-                      ? "bg-[#474747] cursor-not-allowed text-[#323232]"
-                      : "bg-[#9bdc28] text-[#000] cursor-pointer"
+                  className={`px-4 py-2 rounded-[9.421px] font-bold  skew-x-[-30deg] ${currentPageIndex === 0
+                    ? "bg-[#474747] cursor-not-allowed text-[#323232]"
+                    : "bg-[#9bdc28] text-[#000] cursor-pointer"
                     }`}
                 >
                   <p className="skew-x-[30deg] text-[12.562px] font-[Montserrat] uppercase">
@@ -251,11 +266,10 @@ export default function Products() {
                 </button>
                 <button
                   onClick={handleNextPage}
-                  disabled={!currentPage.nextToken}
-                  className={`px-4 py-2 rounded-[9.421px] font-bold skew-x-[-30deg] cursor-pointer ${
-                    !currentPage.nextToken
-                      ? "bg-[#474747] cursor-not-allowed text-[#323232]"
-                      : "bg-[#9bdc28] text-[#000] cursor-pointer"
+                  disabled={isNextDisabled}
+                  className={`px-4 py-2 rounded-[9.421px] font-bold skew-x-[-30deg] cursor-pointer ${isNextDisabled
+                    ? "bg-[#474747] cursor-not-allowed text-[#323232]"
+                    : "bg-[#9bdc28] text-[#000] cursor-pointer"
                     }`}
                 >
                   <p className="skew-x-[30deg] text-[12.562px] font-[Montserrat] uppercase">

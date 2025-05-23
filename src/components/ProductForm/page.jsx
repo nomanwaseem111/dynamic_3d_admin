@@ -3,13 +3,18 @@ import { useForm, Controller } from "react-hook-form";
 import Image from "next/image";
 import Link from "next/link";
 import Button from "../common/Button";
-import { rightArrowIcon, starIcon } from "../../../public";
+import { addIcon, AddIcon, AddTransparentIcon, FolderIcon, rightArrowIcon, starIcon, UploadDocumentIcon } from "../../../public";
 import { toast } from "react-toastify";
 import { useAuth } from "../../context/AuthContext";
 import { useRouter } from "next/navigation";
 import { Loader } from "../Loader";
+import dynamic from "next/dynamic";
 
-export const AddProductForm = () => {
+const TextEditor = dynamic(() => import("../TextEditor"), {
+  ssr: false,
+});
+
+export const ProductForm = ({ mode = "add", initialValues = {} }) => {
   const {
     register,
     handleSubmit,
@@ -40,59 +45,113 @@ export const AddProductForm = () => {
     },
   });
   const images = watch("images", []);
+  const category = watch("categoriesType")
+  console.log({ images });
 
   const { states } = useAuth();
   const router = useRouter();
 
   const [content, setContent] = useState("");
   const [isHovering, setIsHovering] = useState(false);
-  const [font, setFont] = useState("Montserrat");
-  const [fontSize, setFontSize] = useState("16");
-  const [isBold, setIsBold] = useState(false);
-  const [isItalic, setIsItalic] = useState(false);
-  const [isUnderline, setIsUnderline] = useState(false);
-  const [fontDropdownOpen, setFontDropdownOpen] = useState(false);
-  const [sizeDropdownOpen, setSizeDropdownOpen] = useState(false);
   const [isLoader, setIsLoader] = useState(false);
+  const [isOpenDropdown, setIsOpenDropdown] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const [selectedCategoryIndex, setSelectedCategoryIndex] = useState(null);
+  const lastInputRef = useRef(null);
 
-  const fonts = [
-    "Montserrat",
-    "Arial",
-    "Helvetica",
-    "Times New Roman",
-    "Georgia",
-    "Courier New",
-    "Verdana",
-  ];
-
-  const fontSizes = [
-    "12",
-    "14",
-    "16",
-    "18",
-    "20",
-    "24",
-    "28",
-    "32",
-    "36",
-    "40",
-    "48",
-    "56",
-    "64",
-  ];
-
-  const textareaRef = useRef(null);
   useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.style.fontFamily = font;
-      textareaRef.current.style.fontSize = `${fontSize}px`;
-      textareaRef.current.style.fontWeight = isBold ? "bold" : "normal";
-      textareaRef.current.style.fontStyle = isItalic ? "italic" : "normal";
-      textareaRef.current.style.textDecoration = isUnderline
-        ? "underline"
-        : "none";
+    if (mode === "edit" && initialValues.productId) {
+      // reset all fields
+      reset({
+        productName: initialValues.productName || "",
+        sku: initialValues.sku || "",
+        productType: initialValues.productType || "",
+        brand: initialValues.brand || "",
+        defaultPrice: initialValues.defaultPrice ?? "",
+        weight: initialValues.weight ?? "",
+        categoriesType: initialValues.categories || "",
+        description: initialValues.description || "",
+        visibleOnStorefront: initialValues.visibility ?? true,
+        showConditionOnStorefront: initialValues.showCondition ?? false,
+        searchKeywords: initialValues.searchKeyword || "",
+        availability: initialValues.availabilityTest || "",
+        sortOrder: initialValues.sortOrder ?? 0,
+        template: initialValues.template || "Default",
+        condition: initialValues.condition || "New",
+        warranty: initialValues.warrantyInformation || "",
+        images: initialValues.images || [],
+      });
+
+      const existing = (initialValues.images || []).map((img, idx) => ({
+        id: img.imageKey || `existing-${idx}`,
+        imageName: img.imageName,
+        imageKey: img.imageKey,
+        imageUrl: img.imageUrl,
+        selected: false,
+        thumbnail: img.isThumbnail || false
+      }));
+      setValue("images", existing);
+
+      setContent(initialValues.description || "");
+      if (initialValues.categories) {
+        setCategories([
+          { name: initialValues.categories, isEditable: false },
+        ]);
+        setSelectedCategoryIndex(0);
+        setIsOpenDropdown(true);
+      }
     }
-  }, [font, fontSize, isBold, isItalic, isUnderline]);
+  }, [mode, initialValues, reset]);
+
+
+  const handleDropdownOpen = () => {
+    setIsOpenDropdown(true);
+    setCategories([{ name: "", isEditable: true }]);
+    setSelectedCategoryIndex(0);
+  };
+
+  const handleAddCategory = () => {
+    setCategories((prev) => [...prev, { name: "", isEditable: true }]);
+  };
+
+  useEffect(() => {
+    if (lastInputRef.current) {
+      lastInputRef.current.focus();
+    }
+  }, [categories.length]);
+
+  const handleNameChange = (e, idx) => {
+    const updated = [...categories];
+    updated[idx].name = e.target.value.slice(0, 12);
+    setCategories(updated);
+    setValue("categoriesType", updated?.map((cat) => cat.name).join(", "));
+  };
+
+  const finalizeCategory = (idx) => {
+    const updated = [...categories];
+    const trimmed = updated[idx].name.trim();
+
+    if (!trimmed) {
+      updated[idx].error = "Category name cannot be empty";
+      setCategories(updated);
+
+      setTimeout(() => {
+        lastInputRef.current?.focus();
+      }, 0);
+      return;
+    }
+
+    updated[idx].name = trimmed;
+    updated[idx].isEditable = false;
+    updated[idx].error = "";
+    setCategories(updated);
+  };
+
+  const handleKeyDown = (e, idx) => {
+    if (e.key === "Enter") {
+      finalizeCategory(idx);
+    }
+  };
 
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef(null);
@@ -112,14 +171,6 @@ export const AddProductForm = () => {
     e.stopPropagation();
     if (!isDragging) setIsDragging(true);
   };
-  // const handleDrop = (e) => {
-  //   e.preventDefault();
-  //   e.stopPropagation();
-  //   setIsDragging(false);
-  //   if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-  //     handleFiles(e.dataTransfer.files);
-  //   }
-  // };
 
   const handleDrop = (e) => {
     e.preventDefault();
@@ -128,23 +179,18 @@ export const AddProductForm = () => {
 
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       handleFiles(e.dataTransfer.files);
-      e.dataTransfer.clearData(); // Clear dragged files to allow re-uploading the same file
+      e.dataTransfer.clearData();
     }
   };
 
   const handleUploadClick = () => {
     if (fileInputRef.current) fileInputRef.current.click();
   };
-  // const handleFileInputChange = (e) => {
-  //   if (e.target.files && e.target.files.length > 0) {
-  //     handleFiles(e.target.files);
-  //   }
-  // };
 
   const handleFileInputChange = (e) => {
     if (e.target.files && e.target.files.length > 0) {
       handleFiles(e.target.files);
-      e.target.value = ""; // Reset file input to allow re-selecting the same file
+      e.target.value = "";
     }
   };
 
@@ -168,40 +214,50 @@ export const AddProductForm = () => {
       return;
     }
 
-    const newImages = validFiles.map((file, index) => {
-      const maxId =
-        images.length > 0 ? Math.max(...images.map((img) => img.id)) : 0;
-      return {
-        id: maxId + index + 1,
-        name: file.name,
-        selected: false,
-        thumbnail: false,
-        file,
-        preview: URL.createObjectURL(file),
-      };
-    });
-
-    setValue("images", [...images, ...newImages]);
+    const uploads = validFiles.map((file, i) => ({
+      id: `${file.name}-${Date.now()}-${i}`,
+      imageName: file.name,
+      file,
+      imageUrl: URL.createObjectURL(file),
+      selected: false,
+      thumbnail: false
+    }));
+    setValue("images", [...images, ...uploads]);
   };
 
-  const toggleSelect = (id) => {
-    const updated = images.map((img) =>
+  const toggleSelect = id => {
+    const updated = images.map(img =>
       img.id === id ? { ...img, selected: !img.selected } : img
     );
     setValue("images", updated);
   };
 
-  const toggleThumbnail = (id) => {
-    const updated = images.map((img) =>
-      img.id === id ? { ...img, thumbnail: true } : { ...img, thumbnail: false }
+  const toggleThumbnail = id => {
+    const updated = images.map(img =>
+      img.id === id
+        ? { ...img, thumbnail: true }
+        : { ...img, thumbnail: false }
     );
     setValue("images", updated);
   };
 
   const handleDelete = (id) => {
-    const updated = images.filter((img) => img.id !== id);
+    const toDelete = images.find(img => img.id === id);
+
+    if (toDelete?.file) {
+      URL.revokeObjectURL(toDelete.imageUrl);
+    }
+
+    const updated = images.filter(img => img.id !== id);
+
+    if (toDelete?.thumbnail && updated.length) {
+      updated[0].thumbnail = true;
+    }
+
     setValue("images", updated);
   };
+
+  const API_BASE = 'https://s51b3gg2hh.execute-api.us-east-1.amazonaws.com/dev';
 
   const onSubmit = async (data) => {
     setIsLoader(true);
@@ -210,8 +266,8 @@ export const AddProductForm = () => {
       productName: data.productName,
       sku: data.sku,
       description: content,
-      defaultPrice: Number(data.defaultPrice),
-      weight: Number(data.weight),
+      defaultPrice: data.defaultPrice,
+      weight: data.weight,
       searchKeyword: data.searchKeywords,
       availabilityTest: data.availability,
       sortOrder: data.sortOrder,
@@ -221,60 +277,58 @@ export const AddProductForm = () => {
       condition: data.condition,
       templateLayout: data.template,
       productType: data.productType,
-      images: data.images ? data.images.map((img) => img.name) : [],
+      images: images.map(img => img.imageName),
     };
 
     try {
-      const response = await fetch(
-        "https://s51b3gg2hh.execute-api.us-east-1.amazonaws.com/dev/create-product",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${states.token}`,
-          },
-          body: JSON.stringify(payload),
+      const isEdit = mode === 'edit' && initialValues.productId;
+      const url = isEdit
+        ? `${API_BASE}/update-product/${initialValues.productId}`
+        : `${API_BASE}/create-product`;
+      const method = isEdit ? 'PUT' : 'POST';
+
+      console.log('Calling URL:', url);
+      const res = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error(`${isEdit ? 'Update' : 'Create'} failed: ${res.statusText}`);
+      const { presignedUrls } = await res.json();
+
+      for (const img of images) {
+        if (!img.file) continue;
+
+        let uploadUrl;
+        if (Array.isArray(presignedUrls) && typeof presignedUrls[0] === 'string') {
+          const fileUrls = presignedUrls;
+          const idx = images.filter(i => i.file).findIndex(i => i === img);
+          uploadUrl = fileUrls[idx];
+        } else {
+          const entry = presignedUrls.find(u => u.imageName === img.imageName);
+          if (!entry) throw new Error(`No presigned URL for ${img.imageName}`);
+          uploadUrl = entry.presignedUrl;
         }
-      );
 
-      if (!response.ok) {
-        throw new Error(`API Error: ${response.statusText}`);
-      }
-
-      const responseData = await response.json();
-      const presignedUrls = responseData?.presignedUrls;
-
-      for (let i = 0; i < data.images.length; i++) {
-        const file = data.images[i].file;
-        const url = presignedUrls[i];
-
-        if (!file || !url) {
-          console.warn(`No file or presigned URL for index ${i}`);
-          continue;
-        }
-
-        const putResp = await fetch(url, {
-          method: "PUT",
-          headers: { "Content-Type": file.type },
-          body: file,
-          mode: "cors",
+        const putRes = await fetch(uploadUrl, {
+          method: 'PUT',
+          headers: { 'Content-Type': img.file.type },
+          body: img.file,
         });
-
-        if (!putResp.ok) {
-          const errorText = await putResp.text();
-          throw new Error(
-            `Failed to upload image #${i} (${file.name}). Status: ${putResp.status}. ${errorText}`
-          );
+        if (!putRes.ok) {
+          const errorText = await putRes.text();
+          throw new Error(`Upload failed for ${img.imageName}: ${errorText}`);
         }
       }
 
-      reset();
-      setContent("");
-      router.push("/products");
-      toast.success("Product added successfully!");
-    } catch (error) {
-      console.error("Error submitting form:", error);
-      toast.error("Failed to add product. Please try again.");
+      toast.success(isEdit ? 'Product updated successfully!' : 'Product added successfully!');
+      router.push('/products');
+    } catch (err) {
+      console.error('Error saving product:', err);
+      toast.error(`Failed to save product: ${err.message}`);
     } finally {
       setIsLoader(false);
     }
@@ -291,31 +345,35 @@ export const AddProductForm = () => {
             <Link href={"/products"}>
               <Image src={rightArrowIcon} alt="rightArrowIcon" />
             </Link>
-            Add Product
+            {mode === "add" ? "Add Product" : "Product Information"}
           </h1>
           <Button
             type="submit"
             className="skew-x-[-30deg] flex justify-center uppercase items-center rounded-[12px] font-bold btn text-[#000] h-[50px] w-full max-w-[165px]"
           >
-            {isLoader ? <Loader /> : "Save"}
+            {isLoader
+              ? <Loader />
+              : mode === "edit"
+                ? "Update"
+                : "Save"
+            }
           </Button>
         </div>
 
         <div className="mb-8 mt-[37.5px] bg-[#141414] rounded-[20px] p-[35px]">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-[28px] font-[700]">Basic Information</h2>
-            {/* <div className="flex items-center">
+            {/* <div className="flex items-center gap-3">
               <Controller
                 control={control}
                 name="visibleOnStorefront"
                 render={({ field: { value, onChange } }) => (
                   <div className="flex items-center">
                     <div
-                      className={`w-4 h-4 rounded border ${
-                        value
-                          ? "bg-blue-500 border-blue-500"
-                          : "bg-transparent border-gray-500"
-                      } flex items-center justify-center mr-2 cursor-pointer`}
+                      className={`w-4 h-4 rounded border ${value
+                        ? "bg-blue-500 border-blue-500"
+                        : "bg-transparent border-gray-500"
+                        } flex items-center justify-center mr-2 cursor-pointer`}
                       onClick={() => onChange(!value)}
                     >
                       {value && (
@@ -329,7 +387,7 @@ export const AddProductForm = () => {
                           strokeWidth="3"
                           strokeLinecap="round"
                           strokeLinejoin="round"
-                          className="text-white"
+                          className="text-black"
                         >
                           <polyline points="20 6 9 17 4 12"></polyline>
                         </svg>
@@ -337,7 +395,7 @@ export const AddProductForm = () => {
                     </div>
                     <label
                       htmlFor="visible"
-                      className="text-[16px] cursor-pointer"
+                      className="text-[16px] transform scale-y-[0.8] cursor-pointer"
                       onClick={() => onChange(!value)}
                     >
                       Visible on Storefront
@@ -417,6 +475,8 @@ export const AddProductForm = () => {
                 <span className="absolute left-3 top-3.5">$</span>
                 <input
                   type="number"
+                  step="any"                 
+                  inputMode="decimal"
                   {...register("defaultPrice", { required: true })}
                   className="w-full pl-6 pr-3 h-[50px] bg-[#111] border border-[#333] rounded-[8px] text-white focus:outline-none focus:ring-1 focus:ring-[#9ACD32] focus:border-[#9ACD32]"
                 />
@@ -432,7 +492,9 @@ export const AddProductForm = () => {
               </label>
               <div className="relative">
                 <input
-                  type="text"
+                  type="number"
+                  step="any"                 
+                  inputMode="decimal"
                   {...register("weight", { required: true })}
                   className="w-full px-3 h-[50px] pr-12 bg-[#111] border border-[#333] rounded-md text-white focus:outline-none focus:ring-1 focus:ring-[#9ACD32] focus:border-[#9ACD32]"
                 />
@@ -444,28 +506,95 @@ export const AddProductForm = () => {
                 )}
               </div>
             </div>
+          </div>
 
-            <div>
+          <div className="mt-[55px]">
+            <div className="flex flex-row items-center justify-between">
               <label className="block mb-2 text-[18px] font-[700]">
                 Categories
               </label>
-              <select
-                {...register("categoriesType", { required: true })}
-                className="w-full h-[50px] px-3 py-2 bg-[#111] border border-[#333] rounded-[8px] text-white focus:outline-none focus:ring-1 focus:ring-[#9ACD32] focus:border-[#9ACD32]"
-              >
-                <option value="">Select</option>
-                <option value="3D Scanners">3D Scanners</option>
-                <option value="3D Software">3D Software</option>
-                <option value="Accessories">Accessories</option>
-                <option value="Engineering Computers">
-                  Engineering Computers
-                </option>
-                <option value="3D Scanning Services">
-                  3D Scanning Services
-                </option>
-              </select>
-              {errors.categoriesType && (
-                <span className="text-red-500">This field is required</span>
+
+              {isOpenDropdown && (
+                <Button
+                  type="button"
+                  onClick={handleAddCategory}
+                  plusIcon={
+                    <Image
+                      src={AddIcon}
+                      alt="addIcon"
+                      className="skew-x-[30deg]"
+                    />
+                  }
+                  className="flex-shrink-0 !skew-x-[-30deg] text-[12px] font-bold text-[#B2D235] uppercase !transform !scale-y-[0.8]"
+                >
+                  Add Category
+                </Button>
+              )}
+
+            </div>
+            <div className={`flex flex-col ${isOpenDropdown ? "pl-[17px] pt-[23px] pb-[39px] h-[318px] overflow-y-auto" : "items-center justify-center py-[104px]"} gap-y-[34px] w-full rounded-[9px] bg-transparent border border-[#FFFFFF33]`}>
+              {isOpenDropdown ? (
+                categories.map((category, idx) => (
+                  <div key={idx} className="flex flex-col gap-y-1">
+                    <div
+                      className="flex flex-row items-center gap-x-[31px] cursor-pointer"
+                      onClick={() => setSelectedCategoryIndex(idx)}
+                    >
+                      <input
+                        type="radio"
+                        className="accent-[#B2D235] w-[18px] h-[18px]"
+                        checked={selectedCategoryIndex === idx}
+                        onChange={() => setSelectedCategoryIndex(idx)}
+                      />
+                      <div className="flex items-center gap-x-[12px]">
+                        <Image src={FolderIcon} alt="folder-icon" />
+                        {category.isEditable ? (
+                          <input
+                            type="text"
+                            ref={idx === categories.length - 1 ? lastInputRef : null}
+                            className="bg-transparent text-[16px] text-white outline-none"
+                            placeholder="Enter Name"
+                            value={category.name}
+                            onChange={(e) => handleNameChange(e, idx)}
+                            onBlur={() => finalizeCategory(idx)}
+                            onKeyDown={(e) => handleKeyDown(e, idx)}
+                            maxLength={12}
+                          />
+                        ) : (
+                          <span className="text-[16px] text-white">{category.name}</span>
+                        )}
+                      </div>
+                    </div>
+                    {category.error && (
+                      <span className="text-red-500 text-xs pl-[48px]">
+                        {category.error}
+                      </span>
+                    )}
+                  </div>
+                ))
+              ) : (
+                <>
+                  <h1 className="text-[38px] font-bold text-[#595959]">No Categories</h1>
+                  <div className="flex flex-col items-center gap-y-[15px]">
+                    <p className="text-sm text-[#595959] font-arial">
+                      Click on Add Category to add one
+                    </p>
+                    <Button
+                      type="button"
+                      onClick={handleDropdownOpen}
+                      plusIcon={
+                        <Image
+                          src={AddIcon}
+                          alt="addIcon"
+                          className="skew-x-[30deg]"
+                        />
+                      }
+                      className="flex-shrink-0 !skew-x-[-30deg] text-[12px] font-bold text-[#B2D235] uppercase !transform !scale-y-[0.8]"
+                    >
+                      Add Category
+                    </Button>
+                  </div>
+                </>
               )}
             </div>
           </div>
@@ -479,80 +608,12 @@ export const AddProductForm = () => {
               onMouseEnter={() => setIsHovering(true)}
               onMouseLeave={() => setIsHovering(false)}
             >
-              <div className="relative border border-[#333] rounded-xl mt-2">
-                <textarea
-                  ref={textareaRef}
+              <div className="relative border border-[#333] rounded-xl mt-2 bg-transparent overflow-hidden">
+                <TextEditor
                   value={content}
-                  onChange={(e) => setContent(e.target.value)}
-                  className="w-full min-h-[211px] p-[30px] bg-transparent text-gray-300 text-sm md:text-base resize-none focus:outline-none"
-                  style={{ lineHeight: "1.6" }}
-                  placeholder="Enter Description..."
+                  onChange={setContent}
+                  className="min-h-[211px] bg-transparent text-sm md:text-base text-gray-300 px-[30px] py-[30px]"
                 />
-                <div
-                  className={`absolute top-0 flex items-center gap-2 p-2 bg-[#1e1e1e] border border-[#333] rounded-md transition-all duration-200 ${
-                    isHovering
-                      ? "opacity-100 top-[-40px]"
-                      : "opacity-0 top-[-40px] pointer-events-none"
-                  }`}
-                >
-                  <div className="relative">
-                    <button
-                      type="button"
-                      className="flex items-center justify-between w-[140px] h-9 px-3 bg-[#1e1e1e] border border-[#333] rounded-md text-sm text-gray-300"
-                      onClick={() => {
-                        setFontDropdownOpen(!fontDropdownOpen);
-                        setSizeDropdownOpen(false);
-                      }}
-                    >
-                      <span style={{ fontFamily: font }}>{font}</span>
-                    </button>
-                    {fontDropdownOpen && (
-                      <div className="absolute top-full left-0 w-[140px] mt-1 bg-[#1e1e1e] border border-[#333] rounded-md shadow-lg z-20 max-h-[200px] overflow-y-auto">
-                        {fonts.map((f) => (
-                          <button
-                            key={f}
-                            className="w-full px-3 py-2 text-left text-sm text-gray-300 hover:bg-[#333]"
-                            style={{ fontFamily: f }}
-                            onClick={() => {
-                              setFont(f);
-                              setFontDropdownOpen(false);
-                            }}
-                          >
-                            {f}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                  <div className="relative">
-                    <button
-                      type="button"
-                      className="flex items-center justify-between w-[70px] h-9 px-3 bg-[#1e1e1e] border border-[#333] rounded-md text-sm text-gray-300"
-                      onClick={() => {
-                        setSizeDropdownOpen(!sizeDropdownOpen);
-                        setFontDropdownOpen(false);
-                      }}
-                    >
-                      <span>{fontSize}</span>
-                    </button>
-                    {sizeDropdownOpen && (
-                      <div className="absolute top-full left-0 w-[70px] mt-1 bg-[#1e1e1e] border border-[#333] rounded-md shadow-lg z-20 max-h-[200px] overflow-y-auto">
-                        {fontSizes.map((size) => (
-                          <button
-                            key={size}
-                            className="w-full px-3 py-2 text-left text-sm text-gray-300 hover:bg-[#333]"
-                            onClick={() => {
-                              setFontSize(size);
-                              setSizeDropdownOpen(false);
-                            }}
-                          >
-                            {size}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
               </div>
             </div>
           </div>
@@ -562,11 +623,54 @@ export const AddProductForm = () => {
           <div className="max-w-full mx-auto">
             <div className="flex flex-col">
               <div className="flex flex-col flex-wrap p-4 md:p-6 border-b border-b-[#44444466] md:flex-row md:items-center justify-between gap-4">
-                <div>
-                  <h1 className="text-[28px] font-medium">Images</h1>
-                  <p className="text-sm text-[#fff]">
-                    Add images and videos of your product to engage customers.
-                  </p>
+
+                <div className="w-full flex flex-row items-center justify-between gap-4">
+                  <div>
+                    <h1 className="text-[28px] font-medium">Images</h1>
+                    <p className="text-sm text-[#fff]">
+                      Add images of your product to engage customers.
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-7">
+
+                    {/* <div className="flex items-center skew-x-[-30deg] bg-gradient-to-r from-[#B2D235] to-[#81BF41] p-[2px] rounded-[12px]">
+                      <div className="bg-black px-[15px] rounded-[12px]">
+                        <Button
+                          plusIcon={
+                            <Image
+                              src={AddTransparentIcon}
+                              alt="addIcon"
+                              className="skew-x-[30deg] text-white"
+                            />
+                          }
+                          className="flex items-center gap-x-[11.72px] rounded-[12px] py-[14px] pr-[24px] pl-[10px] !skew-x-[-10deg] text-[16px] font-bold text-white uppercase !transform !scale-y-[0.8] w-full bg-transparent"
+                        >
+                          Add From Url
+                        </Button>
+                      </div>
+                    </div> */}
+
+                    <div className="flex items-center skew-x-[-30deg] bg-gradient-to-r from-[#B2D235] to-[#81BF41] p-[2px] rounded-[12px]">
+                      <div className="bg-black px-[15px] rounded-[12px]">
+                        <Button
+                          type="button"
+                          onClick={handleUploadClick}
+                          plusIcon={
+                            <Image
+                              src={UploadDocumentIcon}
+                              alt="addIcon"
+                              className="skew-x-[30deg] text-white"
+                            />
+                          }
+                          className="flex items-center gap-x-[11.72px] rounded-[12px] py-[14px] pr-[24px] pl-[10px] !skew-x-[-10deg] text-[16px] font-bold text-white uppercase !transform !scale-y-[0.8] w-full bg-transparent"
+                        >
+                          Upload Images
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+
                 </div>
               </div>
 
@@ -575,10 +679,18 @@ export const AddProductForm = () => {
                   <h2 className="text-[24px] font-[700] flex items-center gap-4 border-b border-b-[#44444466] py-[19.5px]">
                     Images
                     <div className="text-xs text-gray-400 flex items-center gap-[11px]">
-                      <input
+                      {/* <input
                         type="checkbox"
                         className="h-4 rounded-sm border-gray-600 cursor-pointer"
-                      />
+                        checked={allSelected}
+                        onChange={e => {
+                          const updated = images.map(img => ({
+                            ...img,
+                            selected: e.target.checked
+                          }));
+                          setValue("images", updated);
+                        }}
+                      /> */}
                       {images.length} images
                     </div>
                   </h2>
@@ -596,9 +708,9 @@ export const AddProductForm = () => {
                   </div>
 
                   <div className="space-y-2">
-                    {images.map((image) => (
+                    {images.map((image, i) => (
                       <div
-                        key={image.id}
+                        key={i}
                         className="flex gap-4 px-4 md:px-6 items-center border-b border-b-[#44444466] py-[30px]"
                       >
                         <div className="flex justify-center items-center gap-3 max-w-[100px] w-full">
@@ -610,9 +722,9 @@ export const AddProductForm = () => {
                           />
                         </div>
                         <div className="max-w-[90px] w-full h-12 bg-gray-800 rounded flex items-center justify-center overflow-hidden">
-                          {image.preview ? (
+                          {image?.imageUrl ? (
                             <Image
-                              src={image.preview || "/placeholder.svg"}
+                              src={image.imageUrl || "/placeholder.svg"}
                               alt=""
                               width={48}
                               height={48}
@@ -634,6 +746,7 @@ export const AddProductForm = () => {
                         <div className="!w-[76px] flex justify-center items-center">
                           <input
                             type="radio"
+                            name="thumbnail"
                             checked={image.thumbnail}
                             onChange={() => toggleThumbnail(image.id)}
                             className="w-4 h-4 cursor-pointer"
@@ -669,9 +782,8 @@ export const AddProductForm = () => {
               )}
 
               <div
-                className={`mx-4 md:mx-6 border-2 border-dashed ${
-                  isDragging ? "border-[#B2D235]" : "border-[#444444]"
-                } rounded-lg min-h-[169px] mt-[49px] hover:border-[#B2D235] cursor-pointer p-6 flex items-center gap-x-[52px]`}
+                className={`mx-4 md:mx-6 border-2 border-dashed ${isDragging ? "border-[#B2D235]" : "border-[#444444]"
+                  } rounded-lg min-h-[169px] mt-[49px] hover:border-[#B2D235] cursor-pointer p-6 flex items-center gap-x-[52px]`}
                 onDragEnter={handleDragEnter}
                 onDragLeave={handleDragLeave}
                 onDragOver={handleDragOver}
@@ -737,13 +849,12 @@ export const AddProductForm = () => {
                   control={control}
                   name="showConditionOnStorefront"
                   render={({ field: { value, onChange } }) => (
-                    <div className="flex items-center">
+                    <div className="flex items-center gap-3">
                       <div
-                        className={`w-4 h-4 rounded border ${
-                          value
-                            ? "bg-blue-500 border-blue-500"
-                            : "bg-transparent border-gray-500"
-                        } flex items-center justify-center mr-2 cursor-pointer`}
+                        className={`w-4 h-4 rounded border ${value
+                          ? "bg-blue-500 border-blue-500"
+                          : "bg-transparent border-gray-500"
+                          } flex items-center justify-center cursor-pointer`}
                         onClick={() => onChange(!value)}
                       >
                         {value && (
@@ -757,7 +868,7 @@ export const AddProductForm = () => {
                             strokeWidth="3"
                             strokeLinecap="round"
                             strokeLinejoin="round"
-                            className="text-white"
+                            className="text-black"
                           >
                             <polyline points="20 6 9 17 4 12"></polyline>
                           </svg>
@@ -765,7 +876,7 @@ export const AddProductForm = () => {
                       </div>
                       <label
                         htmlFor="visible"
-                        className="text-[16px] cursor-pointer"
+                        className="text-[16px] cursor-pointer transform scale-y-[0.8]"
                         onClick={() => onChange(!value)}
                       >
                         Show condition on storefront
@@ -920,4 +1031,4 @@ export const AddProductForm = () => {
   );
 };
 
-export default AddProductForm;
+export default ProductForm;

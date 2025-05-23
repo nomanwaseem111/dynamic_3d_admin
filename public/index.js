@@ -13,6 +13,10 @@ import LeftVectorIcon from "./assets/leftvectorIcon.svg"
 import RightVectorIcon from "./assets/rightvectorIcon.svg"
 import addIcon from "./assets/plusIcon.svg"
 import closeIcon from "./assets/closeIcon.svg"
+import AddIcon from "./assets/add.svg"
+import AddTransparentIcon from "./assets/add-transparent.svg"
+import UploadDocumentIcon from "./assets/document-upload.svg"
+import FolderIcon from "./assets/folder.svg"
 
 export {
   LoginLogo,
@@ -29,5 +33,9 @@ export {
   closeIcon,
   LeftVectorIcon,
   RightVectorIcon,
-  addIcon
+  addIcon,
+  AddIcon,
+  AddTransparentIcon,
+  UploadDocumentIcon,
+  FolderIcon
 };

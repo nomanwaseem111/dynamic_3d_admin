@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { AddProductForm } from "../../components/AddProductForm/page";
+import { useRef, useEffect } from "react";
 import Header from "../../components/Header";
 import { Sidebar } from "../../components/Sidebar/page";
+import { ProductForm } from "../../components/ProductForm/page";
 
 export default function AddProduct() {
   const productTypeRef = useRef(null);
@@ -33,7 +33,7 @@ export default function AddProduct() {
       <Header />
       <div className="flex h-full w-full">
         <Sidebar />
-        <AddProductForm />
+        <ProductForm />
       </div>
     </div>
   );
